@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using VotingApp.Helpers;
+using static VotingApp.Controllers.GenericControllerAttribute;
 
 namespace VotingApp
 {
@@ -30,6 +31,9 @@ namespace VotingApp
             //services.AddControllers();
 
             services.AddDbContext<MasterContext>(opts => opts.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+
+            var mvcBuilder = services.AddMvc();
+            mvcBuilder.AddMvcOptions(o => o.Conventions.Add(new GenericControllerNameConvention()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

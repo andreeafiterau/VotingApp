@@ -16,7 +16,7 @@ namespace VotingApp.Entities
         public int CandidateId { get; set; }
 
         [ForeignKey("Users")]
-        [Column(Order = 1)]
+        [Column(Order = 0)]
         [Required]
         public int UserId { get; set; }
 

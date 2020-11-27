@@ -26,7 +26,7 @@ namespace VotingApp.Entities
         [Required]
         [ForeignKey("ApplicationRoles")]
         [Column(Order = 1)]
-        public int IdApplicationRole { get; set; }
+        public int ApplicationRoleId { get; set; }
 
     }
 }
