@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace VotingApp.Entities
 {
@@ -11,17 +7,17 @@ namespace VotingApp.Entities
     public class Candidate
     {
         [Key]
-        [Column(Order = 3)]
+        [Column(Order = 5)]
         [Required]
-        public int CandidateId { get; set; }
+        public int IdCandidate { get; set; }
 
         [ForeignKey("Users")]
         [Column(Order = 0)]
         [Required]
-        public int UserId { get; set; }
+        public int IdUser { get; set; }
 
-        [ForeignKey("ElectoralRooms")]
-        [Column(Order = 4)]
+        [ForeignKey("Electoral_Rooms")]
+        [Column(Order = 2)]
         [Required]
         public int ElectoralRoomId { get; set; }
     }

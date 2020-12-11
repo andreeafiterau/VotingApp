@@ -60,7 +60,7 @@ namespace VotingApp.Controllers
         {
             // map dto to entity and set id
             var candidate = Mapper.Map<Candidate>(candidateDto);
-            candidate.CandidateId = id;
+            candidate.IdCandidate = id;
 
             try
             {

@@ -12,9 +12,9 @@ namespace VotingApp.Controllers
     [Route("[controller]")]
     public class ApplicationRoleController : ControllerBase
     {
-        private IRepository<ApplicationRole> Repository { get; set; }
+        private IRepository<Role> Repository { get; set; }
         private IMapper Mapper { get; set; }
-        public ApplicationRoleController(IRepository<ApplicationRole> _repository, IMapper _mapper)
+        public ApplicationRoleController(IRepository<Role> _repository, IMapper _mapper)
         {
             Repository = _repository;
             Mapper = _mapper;
@@ -24,7 +24,7 @@ namespace VotingApp.Controllers
         public IActionResult Get(int id)
         {
             var applicationRole = Repository.GetByID(id);
-            var applicationRoleDto = Mapper.Map<ApplicationRoleDto>(applicationRole);
+            var applicationRoleDto = Mapper.Map<RoleDto>(applicationRole);
             return Ok(applicationRoleDto);
         }
 
@@ -32,15 +32,15 @@ namespace VotingApp.Controllers
         public IActionResult GetAll()
         {
             var applicationRole = Repository.GetAll();
-            var applicationRoleDtos = Mapper.Map<IList<ApplicationRoleDto>>(applicationRole);
+            var applicationRoleDtos = Mapper.Map<IList<RoleDto>>(applicationRole);
             return Ok(applicationRoleDtos);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] ApplicationRoleDto applicationRoleDto)
+        public IActionResult Create([FromBody] RoleDto applicationRoleDto)
         {
             // map dto to entity
-            var applicationRole = Mapper.Map<ApplicationRole>(applicationRoleDto);
+            var applicationRole = Mapper.Map<Role>(applicationRoleDto);
 
             try
             {
@@ -56,11 +56,11 @@ namespace VotingApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]ApplicationRoleDto applicationRoleDto)
+        public IActionResult Update(int id, [FromBody]RoleDto applicationRoleDto)
         {
             // map dto to entity and set id
-            var applicationRole = Mapper.Map<ApplicationRole>(applicationRoleDto);
-            applicationRole.ApplicationRoleId = id;
+            var applicationRole = Mapper.Map<Role>(applicationRoleDto);
+            applicationRole.IdRole = id;
 
             try
             {

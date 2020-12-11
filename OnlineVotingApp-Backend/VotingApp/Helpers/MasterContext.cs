@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using VotingApp.Entities;
+﻿using VotingApp.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace VotingApp.Helpers
@@ -15,8 +11,25 @@ namespace VotingApp.Helpers
 
         public DbSet <Candidate> Candidates { get; set; }
 
-        public DbSet <ElectoralRoom>ElectoralRooms { get; set; }
+        public DbSet <Electoral_Room> ElectoralRooms { get; set; }
 
-        public DbSet <ApplicationRole> ApplicationRoles { get; set; }
+        public DbSet <Role> Roles { get; set; }
+
+        public DbSet <Vote> Votes { get; set; }
+
+        public DbSet <User_Role> Users_Roles { get; set; }
+
+        public DbSet<User_Department> Users_Departments { get; set; }
+
+        public DbSet<Election_User> Election_Users { get; set; }
+
+        public DbSet<Department> Departments { get; set; }
+
+        public DbSet<College> Colleges { get; set; }
+
+        public DbSet<Activation_Code> Activation_Codes { get; set; }
+
+
+
     }
 }

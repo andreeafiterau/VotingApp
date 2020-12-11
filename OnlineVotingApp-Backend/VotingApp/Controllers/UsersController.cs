@@ -1,9 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using VotingApp.Dtos;
 using VotingApp.Entities;
+using VotingApp.Helpers;
 using VotingApp.Interfaces;
 
 namespace VotingApp.Controllers
@@ -13,11 +19,18 @@ namespace VotingApp.Controllers
     public abstract class UsersController : ControllerBase
     {
         private IRepository<User> Repository { get; set; }
+
+        private IUsersInterface _userService { get; set; }
         private IMapper Mapper { get; set; }
-        public UsersController(IRepository<User> _repository, IMapper _mapper)
+
+        private AppSettings _appSettings { get; set; }
+
+        public UsersController(IRepository<User> _repository, IMapper _mapper, IUsersInterface userService,AppSettings appSettings)
         {
             Repository = _repository;
             Mapper = _mapper;
+            _userService = userService;
+            _appSettings = appSettings;
         }
 
         [HttpGet("{id}")]        
@@ -60,7 +73,7 @@ namespace VotingApp.Controllers
         {
             // map dto to entity and set id
             var user = Mapper.Map<User>(userDto);
-            user.UserId = id;
+            user.IdUser = id;
 
             try
             {
@@ -80,6 +93,52 @@ namespace VotingApp.Controllers
         {            
             Repository.Delete(id);
             return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("authenticate")]//ROUTE
+        /***********************************************************************************
+         * 
+         * Authenticate method:
+         *     + Return type: IActionResult.
+         *     + @param userDto: first argument,type UserDto.
+         *     + It is used to validate if a user exists in the database and the password is 
+         *       correct.
+         *     + HttpPost request.
+         * 
+         ***********************************************************************************/
+        public IActionResult Authenticate([FromBody]UserDto userDto)
+        {
+            var user = _userService.Authenticate(userDto.Username, userDto.Password);
+
+            if (user == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+            if (!user.IsAccountActive)
+                return BadRequest(new { message = "User is inactive" });
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, user.IdUser.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            // return basic user info (without password) and token to store client side
+            return Ok(new
+            {
+                IdUser = user.IdUser,
+                Username = user.Username,
+                Email = user.Email,
+                IsActive = user.IsAccountActive,
+                Token = tokenString
+            });
         }
     }
 }

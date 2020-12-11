@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace VotingApp.Entities
 {
@@ -13,20 +9,37 @@ namespace VotingApp.Entities
         [Key]
         [Column(Order = 0)]
         [Required]
-        public int UserId { get; set; }
+        public int IdUser { get; set; }
 
         [Required]
         [StringLength(25)]
         public string Username { get; set; }
 
         [Required]
-        [StringLength(25)]
-        public string Password { get; set; }
+        public byte[] PasswordHash { get; set; }
 
         [Required]
-        [ForeignKey("ApplicationRoles")]
-        [Column(Order = 1)]
-        public int ApplicationRoleId { get; set; }
+        public byte[] PasswordSalt { get; set; }
+
+        [Required]
+        [StringLength(25)]
+        public string FirstName { get; set; }
+
+        [Required]
+        [StringLength(25)]
+        public string LastName { get; set; }
+
+        [StringLength(25)]
+        public string NrMatricol { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Email { get; set; }
+
+        [Required]
+        public bool IsAccountActive { get; set; }
+
+
 
     }
 }

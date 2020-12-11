@@ -14,9 +14,9 @@ namespace VotingApp.Controllers
     [Route("[controller]")]
     public class ElectoralRoomController : ControllerBase
     {
-        private IRepository<ElectoralRoom> Repository { get; set; }
+        private IRepository<Electoral_Room> Repository { get; set; }
         private IMapper Mapper { get; set; }
-        public ElectoralRoomController(IRepository<ElectoralRoom> _repository, IMapper _mapper)
+        public ElectoralRoomController(IRepository<Electoral_Room> _repository, IMapper _mapper)
         {
             Repository = _repository;
             Mapper = _mapper;
@@ -26,7 +26,7 @@ namespace VotingApp.Controllers
         public IActionResult Get(int id)
         {
             var electoralRoom = Repository.GetByID(id);
-            var electoralRoomDto = Mapper.Map<ElectoralRoomDto>(electoralRoom);
+            var electoralRoomDto = Mapper.Map<Electoral_Room_Dto>(electoralRoom);
             return Ok(electoralRoomDto);
         }
 
@@ -34,15 +34,15 @@ namespace VotingApp.Controllers
         public IActionResult GetAll()
         {
             var electoralRoom = Repository.GetAll();
-            var electoralRoomDtos = Mapper.Map<IList<ElectoralRoomDto>>(electoralRoom);
+            var electoralRoomDtos = Mapper.Map<IList<Electoral_Room_Dto>>(electoralRoom);
             return Ok(electoralRoomDtos);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] ElectoralRoomDto electoralRoomDto)
+        public IActionResult Create([FromBody] Electoral_Room_Dto electoralRoomDto)
         {
             // map dto to entity
-            var electoralRoom = Mapper.Map<ElectoralRoom>(electoralRoomDto);
+            var electoralRoom = Mapper.Map<Electoral_Room>(electoralRoomDto);
 
             try
             {
@@ -58,11 +58,11 @@ namespace VotingApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]ElectoralRoomDto electoralRoomDto)
+        public IActionResult Update(int id, [FromBody]Electoral_Room_Dto electoralRoomDto)
         {
             // map dto to entity and set id
-            var electoralRoom = Mapper.Map<ElectoralRoom>(electoralRoomDto);
-            electoralRoom.ElectoralRoomId = id;
+            var electoralRoom = Mapper.Map<Electoral_Room>(electoralRoomDto);
+            electoralRoom.IdElectoralRoom = id;
 
             try
             {
