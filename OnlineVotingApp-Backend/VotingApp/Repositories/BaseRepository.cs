@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using VotingApp.Helpers;
 using VotingApp.Interfaces;
 
@@ -19,25 +18,27 @@ namespace VotingApp
             dbSet = context.Set<TEntity>();
         }
 
-        public async Task<TEntity> GetByID<TKey>(TKey id)
+        public TEntity GetByID(int id)
         {
-            return await dbSet.FindAsync(id);           
+            return dbSet.Find(id);           
         }
 
-        public async virtual Task<TEntity> Insert(TEntity entity)
+        public TEntity Insert(TEntity entity)
         {
             dbSet.Add(entity);
-            await _context.SaveChangesAsync();
+             _context.SaveChanges();
 
             return entity;
         }
 
-        public virtual void Delete(object id)
+        public void Delete(int id)
         {
-            TEntity entityToDelete = dbSet.Find(id);
-            Delete(entityToDelete);
-
+            TEntity entity=dbSet.Find(id);
+              
+            dbSet.Remove(entity);
             _context.SaveChanges();
+            
+
         }
 
         public void Update(TEntity entityToUpdate)
@@ -49,9 +50,9 @@ namespace VotingApp
 
         }
 
-        public async virtual Task<IEnumerable<TEntity>> GetAll()
+        public IEnumerable<TEntity> GetAll()
         {
-            return await _context.Set<TEntity>().ToListAsync();
+            return _context.Set<TEntity>().ToList();
         }
     }
 }

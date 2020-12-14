@@ -32,8 +32,9 @@ namespace VotingApp
         {
             services.AddCors();
             services.AddDbContext<MasterContext>(opts => opts.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddAutoMapper(typeof(Startup));
+           
 
 
             // configure strongly typed settings objects
@@ -78,6 +79,8 @@ namespace VotingApp
 
             services.AddScoped<IUsersInterface, UsersService>();
             services.AddScoped<IRepository<User>, BaseRepository<User>>();
+            services.AddScoped<IRepository<Electoral_Room>, BaseRepository<Electoral_Room>>();
+            services.AddScoped<IRepository<Role>, BaseRepository<Role>>();
 
         }
 

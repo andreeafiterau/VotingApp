@@ -136,7 +136,10 @@ namespace VotingApp.Controllers
                 IdUser = user.IdUser,
                 Username = user.Username,
                 Email = user.Email,
-                IsActive = user.IsAccountActive,
+                FirstName=user.FirstName,
+                LastName=user.LastName,
+                NrMatricol=user.NrMatricol,
+                IsAccountActive = user.IsAccountActive,
                 Token = tokenString
             });
         }

@@ -7,13 +7,13 @@ namespace VotingApp.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        void Delete(object id);
+        void Delete(int id);
 
-        Task<TEntity> GetByID<TKey>(TKey id);
+        TEntity GetByID(int id);
 
-        Task<IEnumerable<TEntity>> GetAll();
+        IEnumerable<TEntity> GetAll();
 
-        Task<TEntity> Insert(TEntity entity);
+        TEntity Insert(TEntity entity);
 
         void Update(TEntity entityToUpdate);
     }
