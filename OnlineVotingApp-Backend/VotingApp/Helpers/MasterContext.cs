@@ -29,6 +29,8 @@ namespace VotingApp.Helpers
 
         public DbSet<Activation_Code> Activation_Codes { get; set; }
 
+        public DbSet<Candidate_Electoral_Room> Candidate_Electoral_Rooms { get; set; }
+
 
 
     }

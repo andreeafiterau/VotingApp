@@ -8,7 +8,7 @@ namespace VotingApp.Entities
     {
         [Key]
         [Column(Order = 5)]
-        [Required]
+        [Required] 
         public int IdCandidate { get; set; }
 
         [ForeignKey("Users")]
@@ -19,6 +19,8 @@ namespace VotingApp.Entities
         [ForeignKey("Electoral_Rooms")]
         [Column(Order = 2)]
         [Required]
-        public int ElectoralRoomId { get; set; }
+        public int IdElectoralRoom { get; set; }
     }
+
+   
 }

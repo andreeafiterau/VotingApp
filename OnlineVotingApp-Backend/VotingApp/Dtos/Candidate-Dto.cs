@@ -1,6 +1,6 @@
 ﻿namespace VotingApp.Dtos
 {
-    public class CandidateDto
+    public class Candidate_Dto
     {
         public int IdCandidate { get; set; }
 
