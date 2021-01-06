@@ -5,5 +5,7 @@
         public int IdDepartament { get; set;}
 
         public string DeparatamentName { get; set; }
+
+        public int IdCollege { get; set; }
     }
 }

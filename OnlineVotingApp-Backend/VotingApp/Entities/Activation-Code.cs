@@ -10,6 +10,9 @@ namespace VotingApp.Entities
         [Column(Order = 6)]
         public int IdCode { get; set; }
 
+        [Required]
+        public string Code { get; set; }
+
         [ForeignKey("Users")]
         [Column(Order = 0)]
         public int IdUser { get; set; }

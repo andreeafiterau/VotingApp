@@ -5,5 +5,6 @@
         public int IdCollege { get; set; }
 
         public string CollegeName { get; set; }
+
     }
 }

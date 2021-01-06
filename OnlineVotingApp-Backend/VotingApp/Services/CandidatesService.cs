@@ -4,16 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using VotingApp.Entities;
 using VotingApp.Helpers;
+using VotingApp.Interfaces;
 
 namespace VotingApp.Services
 {
-    public class CandidatesService
+    public class CandidatesService : ICandidateInterface
     {
         private readonly MasterContext _context;
         public CandidatesService(MasterContext context)
         {
             _context = context;
         }
+
+        //choose candidates from list (posible candidates for each electoral room)
         public IEnumerable<Candidate> GetCandidates(int IdElectoralRoom)
         {
             var cand = _context.Candidates;
@@ -35,6 +38,7 @@ namespace VotingApp.Services
             return candidates;
         }
 
+        // add electoral for each specific candidate
         public void AddCandidateOnElectoralRoom(int IdElectoralRoom,int IdCandidate)
         {
             var cand = _context.Candidates;
@@ -47,25 +51,6 @@ namespace VotingApp.Services
                 }
             }
         }
-
-        public IEnumerable<Candidate> GetCandidatesForElection(int IdElectoralRoom)
-        {
-            var cand = _context.Candidates;
-
-            IList<Candidate> candidatesForElection = new List<Candidate>();
-
-            foreach(var c in cand)
-            {
-                if(c.IdElectoralRoom==IdElectoralRoom)
-                {
-                    candidatesForElection.Add(c);
-                }
-
-            }
-
-            return candidatesForElection;
-        }
-
 
     }
 }

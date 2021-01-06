@@ -18,6 +18,12 @@ namespace VotingApp.Helpers
             CreateMap<Electoral_Room_Dto, Electoral_Room>();
             CreateMap<Role,RoleDto>();
             CreateMap<RoleDto, Role>();
+            CreateMap<ObjectForUsersFilterDto, ObjectForUsersFilter>();
+            CreateMap<ObjectForUsersFilter, ObjectForUsersFilterDto>();
+            CreateMap<UserAdminViewDto, UserAdminView>();
+            CreateMap<UserAdminView, UserAdminViewDto>();
+            CreateMap<Candidate, Candidate_Dto>();
+            CreateMap<Candidate_Dto, Candidate>();
 
         }//CONSTRUCTOR
     }

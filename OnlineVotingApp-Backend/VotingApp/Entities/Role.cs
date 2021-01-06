@@ -7,6 +7,14 @@ namespace VotingApp.Entities
     [Table("Roles")]
     public class Role
     {
+        public Role() { }
+
+        public Role(int idRole,string roleName)
+        {
+            IdRole = idRole;
+            RoleName = roleName;
+        }
+
         [Key]
         [Column(Order = 1)]
         [Required]

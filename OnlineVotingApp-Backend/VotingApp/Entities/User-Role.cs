@@ -7,6 +7,14 @@ namespace VotingApp.Entities
     [Keyless]
     public class User_Role
     {
+        public User_Role() { }
+
+        public User_Role(int idUser, int idRole)
+        {
+            IdUser = idUser;
+            IdRole = idRole;
+        }
+
         [ForeignKey("Users")]
         [Column(Order = 0)]
         public int IdUser { get; set; }
