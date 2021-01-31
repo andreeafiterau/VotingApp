@@ -31,7 +31,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
         {
             var objectForUsersFilter = Mapper.Map<ObjectForUsersFilter>(objectForUsersFilterDto);
             var usersForElection = ElectionService.GetUsersForElection(objectForUsersFilter, id);
-            var usersForElectionDtos = Mapper.Map<IList<Electoral_Room_Dto>>(usersForElection);
+            var usersForElectionDtos = Mapper.Map<IList<UserDto>>(usersForElection);
             return Ok(usersForElectionDtos);
         }
 

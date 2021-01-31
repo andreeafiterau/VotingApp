@@ -2,9 +2,9 @@
 {
     public class DepartmentDto
     {
-        public int IdDepartament { get; set;}
+        public int IdDepartment { get; set;}
 
-        public string DeparatamentName { get; set; }
+        public string DepartmentName { get; set; }
 
         public int IdCollege { get; set; }
     }

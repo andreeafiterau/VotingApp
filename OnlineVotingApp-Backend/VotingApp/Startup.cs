@@ -81,6 +81,13 @@ namespace VotingApp
             services.AddScoped<IRepository<User>, BaseRepository<User>>();
             services.AddScoped<IRepository<Electoral_Room>, BaseRepository<Electoral_Room>>();
             services.AddScoped<IRepository<Role>, BaseRepository<Role>>();
+            services.AddScoped<IRepository<College>, BaseRepository<College>>();
+            services.AddScoped<IRepository<Department>, BaseRepository<Department>>();
+            services.AddScoped<IRepository<Election_User>, BaseRepository<Election_User>>();
+            services.AddScoped<IElectionInterface, ElectionService>();
+            services.AddScoped<ICandidateInterface, CandidatesService>();
+            services.AddScoped<IRepository<Candidate>, BaseRepository<Candidate>>();
+
 
         }
 

@@ -33,32 +33,33 @@ namespace VotingApp.Controllers
             _appSettings = appSettings;
         }
 
-        [HttpGet("{id}")]        
-        public IActionResult Get(int id)
-        {
-            var user = Repository.GetByID(id);
-            var userDto = Mapper.Map<UserDto>(user);
-            return Ok(userDto);
-        }
+        //[HttpGet("{id}")]        
+        //public IActionResult Get(int id)
+        //{
+        //    var user = Repository.GetByID(id);
+        //    var userDto = Mapper.Map<UserDto>(user);
+        //    return Ok(userDto);
+        //}
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(ObjectForUsersFilterDto objectForUsersFilterDto)
         {
-            var users = Repository.GetAll();
+            var objectForUsersFilter = Mapper.Map<ObjectForUsersFilter>(objectForUsersFilterDto);
+            var users = _userService.GetAllUsersForAdmin(objectForUsersFilter);
             var userDtos = Mapper.Map<IList<UserDto>>(users);
             return Ok(userDtos);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] UserDto userDto)
+        public IActionResult Create([FromBody] UserAdminViewDto userAdminViewDto)
         {
             // map dto to entity
-            var user = Mapper.Map<User>(userDto);
+            var user = Mapper.Map<UserAdminView>(userAdminViewDto);
 
             try
             {
                 // save 
-                Repository.Insert(user);
+                _userService.AddUsers(user);
                 return Ok();
             }
             catch (Exception ex)
@@ -69,16 +70,35 @@ namespace VotingApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]UserDto userDto)
+        public IActionResult Update(int id, [FromBody]UserAdminViewDto userAdminViewDto)
         {
             // map dto to entity and set id
+            var user = Mapper.Map<UserAdminView>(userAdminViewDto);
+            
+            try
+            {
+                // save 
+                _userService.UpdateUsersForAdmin(user);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("changePassword")]
+        public IActionResult ChangePassword([FromBody]UserDto userDto)
+        {
+            string password = userDto.Password;
+            // map dto to entity and set id
             var user = Mapper.Map<User>(userDto);
-            user.IdUser = id;
 
             try
             {
                 // save 
-                Repository.Update(user);
+                _userService.ChangePassword(user,password);
                 return Ok();
             }
             catch (Exception ex)
@@ -90,8 +110,8 @@ namespace VotingApp.Controllers
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
-        {            
-            Repository.Delete(id);
+        {
+            _userService.DeleteUserForAdmin(id);
             return Ok();
         }
 
@@ -136,9 +156,9 @@ namespace VotingApp.Controllers
                 IdUser = user.IdUser,
                 Username = user.Username,
                 Email = user.Email,
-                FirstName=user.FirstName,
-                LastName=user.LastName,
-                NrMatricol=user.NrMatricol,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                NrMatricol = user.NrMatricol,
                 IsAccountActive = user.IsAccountActive,
                 Token = tokenString
             });

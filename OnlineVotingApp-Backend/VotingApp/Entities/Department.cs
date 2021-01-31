@@ -19,7 +19,7 @@ namespace VotingApp.Entities
         [Column (Order = 3)]
         public int IdDepartment { get; set; }
 
-        [Required]
+        
         [StringLength(50)]
         public string DepartmentName { get; set; }
 

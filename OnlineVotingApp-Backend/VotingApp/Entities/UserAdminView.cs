@@ -7,20 +7,13 @@ namespace VotingApp.Entities
 {
     public class UserAdminView
     {
-        //public int IdUser { get; set; }
-
-        //public string FirstName { get; set; }
-
-        //public string LastName { get; set; }
-
-        //public string Username { get; set; }
-
-        //public string NrMatricol { get; set; }
-
-        //public string Email { get; set; }
-
-        //public bool IsAccountActive { get; set; }
-
+        public UserAdminView()
+        {
+            User = new User();
+            Role = new Role();
+            Colleges = new List<College>();
+            Departments = new List<Department>();
+        }
         public User User { get; set; }
 
         public Role Role  { get; set; }

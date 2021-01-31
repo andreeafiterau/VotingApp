@@ -24,7 +24,7 @@ namespace VotingApp.Controllers
         public IActionResult Get(int id)
         {
             var candidate = Repository.GetByID(id);
-            var candidateDto = Mapper.Map<CandidateDto>(candidate);
+            var candidateDto = Mapper.Map<Candidate_Dto>(candidate);
             return Ok(candidateDto);
         }
 
@@ -32,12 +32,12 @@ namespace VotingApp.Controllers
         public IActionResult GetAll()
         {
             var candidate = Repository.GetAll();
-            var candidateDtos = Mapper.Map<IList<CandidateDto>>(candidate);
+            var candidateDtos = Mapper.Map<IList<Candidate_Dto>>(candidate);
             return Ok(candidateDtos);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CandidateDto candidateDto)
+        public IActionResult Create([FromBody] Candidate_Dto candidateDto)
         {
             // map dto to entity
             var candidate = Mapper.Map<Candidate>(candidateDto);
@@ -56,7 +56,7 @@ namespace VotingApp.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]CandidateDto candidateDto)
+        public IActionResult Update(int id, [FromBody]Candidate_Dto candidateDto)
         {
             // map dto to entity and set id
             var candidate = Mapper.Map<Candidate>(candidateDto);

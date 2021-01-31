@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VotingApp.Dtos;
 using VotingApp.Entities;
+using VotingApp.Helpers;
 using VotingApp.Interfaces;
 
 namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
@@ -27,7 +28,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetAll(int id)
+        public IActionResult GetAll(int id)//alt numeeeeeee
         {
             var candidates = CandidateService.GetCandidates(id);
             var candidatesDtos = Mapper.Map<IList<Candidate_Dto>>(candidates);
@@ -53,20 +54,39 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             }
         }
 
-        [HttpPost("{idElectoralRoom}/{idCandidate}")]
-        public IActionResult AddElectoralRoom(int idElectoralRoom, int idCandidate)
+        [HttpPost]
+        public IActionResult Vote([FromBody] VotesDto voteDto)
         {
-            CandidateService.AddCandidateOnElectoralRoom(idElectoralRoom, idCandidate);
+            // map dto to entity
+            var vote = Mapper.Map<Vote>(voteDto);
 
-            return Ok();
+            try
+            {
+                // save 
+                AddToKeylessTable.AddToTable_Vote(vote.IdUser,vote.IdCandidate);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update([FromBody]Candidate_Dto candidateDto)
+        //[HttpPost("{idElectoralRoom}/{idCandidate}")]
+        //public IActionResult AddElectoralRoom(int idElectoralRoom, int idCandidate)
+        //{
+        //    CandidateService.AddCandidateOnElectoralRoom(idElectoralRoom, idCandidate);
+
+        //    return Ok();
+        //}
+
+        [HttpPut("{id}")]// sa trimit si vechea cheie pe care vreau sa o modific
+        public IActionResult Update([FromBody]Candidate_Dto candidateDto,int id)
         {
             // map dto to entity and set id
             var candidate = Mapper.Map<Candidate>(candidateDto);
-
+            candidate.IdCandidate = id;
 
             try
             {

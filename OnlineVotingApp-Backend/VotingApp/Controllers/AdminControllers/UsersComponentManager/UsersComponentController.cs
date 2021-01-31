@@ -24,7 +24,7 @@ namespace VotingApp.Controllers.AdminControllers.UsersComponentManager
             UsersService = usersService;
         }
 
-        [HttpGet("filter")]
+        [HttpPost("filter")]
         public IActionResult GetAll([FromBody] ObjectForUsersFilterDto objectForUsersFilterDto)
         {
             var objectForUsersFilter = Mapper.Map<ObjectForUsersFilter>(objectForUsersFilterDto);
@@ -52,11 +52,13 @@ namespace VotingApp.Controllers.AdminControllers.UsersComponentManager
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update([FromBody]UserAdminViewDto userAdminViewDto)
+        public IActionResult Update([FromBody]UserAdminViewDto userAdminViewDto,int id)
         {
             // map dto to entity and set id
             var userAdminView = Mapper.Map<UserAdminView>(userAdminViewDto);
-            
+            userAdminView.User.IdUser = id;
+
+
             try
             {
                 // save 

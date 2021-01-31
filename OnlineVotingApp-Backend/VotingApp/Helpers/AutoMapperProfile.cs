@@ -24,6 +24,10 @@ namespace VotingApp.Helpers
             CreateMap<UserAdminView, UserAdminViewDto>();
             CreateMap<Candidate, Candidate_Dto>();
             CreateMap<Candidate_Dto, Candidate>();
+            CreateMap<College, College_Dto>();
+            CreateMap<College_Dto, College>();
+            CreateMap<Department, DepartmentDto>();
+            CreateMap<DepartmentDto, Department>();
 
         }//CONSTRUCTOR
     }

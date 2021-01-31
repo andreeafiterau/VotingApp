@@ -12,57 +12,96 @@ namespace VotingApp.Services
     {
         private MasterContext _context;
         private IRepository<User> _userRepo;
+        private IRepository<Activation_Code> _activationCodeRepo;
+        
 
         public UsersService(MasterContext context,IRepository<User> userRepo)
         {
             _context = context;
             _userRepo = userRepo;
+           
 
         }//CONSTRUCTOR
 
-        //public User Authenticate(string username, string password)
-        //{
-        //    if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-        //        return null;
+        public User Authenticate(string username, string password)
+        {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                return null;
 
-        //    var user = _context.Users.SingleOrDefault(x => x.Username == username);
+            var user = _context.Users.SingleOrDefault(x => x.Username == username);
 
-        //    // check if username exists
-        //    if (user == null)
-        //        return null;
+            // check if username exists
+            if (user == null)
+                return null;
 
-        //    // check if password is correct
-        //    if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-        //        return null;
+            // check if password is correct
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+                return null;
 
-        //    // authentication successful
-        //    return user;
+            // authentication successful
+            return user;
 
-        //}//METHOD Authenticate
+        }//METHOD Authenticate
 
-        //public User Create(User user, string password)
-        //{
-        //    // validation
-        //    if (string.IsNullOrWhiteSpace(password))
-        //        throw new Exception("Password is required");
+        public User Create(User user, string password, string activationCode)
+        {
+            if(!VerifyActivationCode(activationCode,user.IdUser))
+                throw new Exception("Activation Code is not correct");
 
-        //    if (_context.Users.Any(x => x.Username == user.Username))
-        //        throw new Exception("Username \"" + user.Username + "\" is already taken");
+            // validation
+            if (string.IsNullOrWhiteSpace(password))
+                throw new Exception("Password is required");
 
-        //    byte[] passwordHash, passwordSalt;
-        //    CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            byte[] passwordHash, passwordSalt;
+            CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-        //    user.PasswordHash = passwordHash;
-        //    user.PasswordSalt = passwordSalt;
-        //    user.IsAccountActive = true;
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.IsAccountActive = true;
 
-        //    _context.Users.Add(user);
-        //    _context.SaveChanges();
+            _context.Users.Update(user);
+            _context.SaveChanges();
 
-        //    return user;
+            //activation code delete after user id
 
-        //}//METHOD Create
+            return user;
 
+        }//METHOD Create
+
+        public string CreateActivationKey()
+        {
+            var activationKey = Guid.NewGuid().ToString();
+
+            var activationKeyAlreadyExists =
+             _activationCodeRepo.GetAll().Any(key => key.Code == activationKey);
+
+            if (activationKeyAlreadyExists)
+            {
+                activationKey = CreateActivationKey();
+            }
+
+            return activationKey;
+        }
+
+        public void AddActivationKeyToTable(string Key,int IdUser)
+        {
+            _activationCodeRepo.Insert(new Activation_Code(Key,IdUser));
+        }
+
+        public bool VerifyActivationCode(string Key,int idUser)
+        {
+            //get after idUser
+            var codeFromTable = _activationCodeRepo.GetAll().Where(user => user.IdUser == idUser);
+            foreach(var code in codeFromTable)
+            {
+                if(code.Code==Key)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
         //public void Update(User userParam, string password = null)
         //{
         //    var user = _context.Users.Find(userParam.IdUser);
@@ -72,17 +111,17 @@ namespace VotingApp.Services
 
         //    if (userParam.Username != user.Username)
         //    {
-        //        // username has changed so check if the new username is already taken
+        //        username has changed so check if the new username is already taken
         //        if (_context.Users.Any(x => x.Username == userParam.Username))
         //            throw new Exception("Username " + userParam.Username + " is already taken");
         //    }
 
-        //    // update user properties
+        //    update user properties
         //    user.Email = userParam.Email;
         //    user.Username = userParam.Username;
         //    user.IsAccountActive = userParam.IsAccountActive;
 
-        //    // update password if it was entered
+        //    update password if it was entered
         //    if (!string.IsNullOrWhiteSpace(password))
         //    {
         //        byte[] passwordHash, passwordSalt;
@@ -97,39 +136,55 @@ namespace VotingApp.Services
 
         //}//METHOD Update
 
-        //private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        //{
-        //    if (password == null) throw new ArgumentNullException("password");
-        //    if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+        public void ChangePassword(User user,string password)
+        {
+            // validation
+            if (string.IsNullOrWhiteSpace(password))
+                throw new Exception("Password is required");
 
-        //    using (var hmac = new System.Security.Cryptography.HMACSHA512())
-        //    {
-        //        passwordSalt = hmac.Key;
-        //        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        //    }
+            byte[] passwordHash, passwordSalt;
+            CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-        //}//METHOD CreatePasswordHash
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
 
-        //private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        //{
-        //    if (password == null) throw new ArgumentNullException("password");
-        //    if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-        //    if (storedHash.Length != 64) throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
-        //    if (storedSalt.Length != 128) throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
+            _context.Users.Update(user);
+            _context.SaveChanges();
+        }
 
-        //    using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
-        //    {
-        //        var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        //        for (int i = 0; i < computedHash.Length; i++)
-        //        {
-        //            if (computedHash[i] != storedHash[i]) return false;
-        //        }
-        //    }
+        private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            if (password == null) throw new ArgumentNullException("password");
+            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
 
-        //    return true;
-        //}
+            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
 
-        
+        }//METHOD CreatePasswordHash
+
+        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
+        {
+            if (password == null) throw new ArgumentNullException("password");
+            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+            if (storedHash.Length != 64) throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
+            if (storedSalt.Length != 128) throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
+
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != storedHash[i]) return false;
+                }
+            }
+
+            return true;
+        }
+
+
         public IEnumerable<UserAdminView> GetAllUsersForAdmin(ObjectForUsersFilter objectForUsersFilter)
         {
             return UsersFilter.GetFilteredUsers(objectForUsersFilter);
@@ -143,17 +198,13 @@ namespace VotingApp.Services
             
             _userRepo.Insert(user);
 
-
-            User_Role user_role = new User_Role(userAdminView.Role.IdRole,user.IdUser);
-
-            
-            _context.Add(user_role);
+            AddToKeylessTable.AddToTable_User_Role(user.IdUser, userAdminView.Role.IdRole);
 
             
             foreach(var department in userAdminView.Departments)
             {
-                User_Department user_Department = new User_Department(user.IdUser,department.IdDepartment);
-                _context.Add(user_Department);
+                //User_Department user_Department = new User_Department(user.IdUser,department.IdDepartment);
+                AddToKeylessTable.AddToTable_User_Department(user.IdUser, department.IdDepartment);
             }
 
            
@@ -167,19 +218,15 @@ namespace VotingApp.Services
         {
             if(userAdminView.User.IsAccountActive)
             {
-               
-                var temp1 = _context.Users_Roles.Where(u => u.IdUser == userAdminView.User.IdUser)
-                          .Select(u => new User_Role(userAdminView.Role.IdRole, userAdminView.User.IdUser))
-                          .ToList();
+
+                AddToKeylessTable.UpdateTable_User_Role(userAdminView.User.IdUser, userAdminView.Role.IdRole);
 
                
                 foreach (var department in userAdminView.Departments)
                 {
-                   
-                    var temp2 = _context.Users_Departments.Where(d => d.IdUser == userAdminView.User.IdUser)
-                          .Select(d => new User_Department(userAdminView.User.IdUser, department.IdDepartment))
-                          .ToList();
-                    
+
+                    AddToKeylessTable.UpdateTable_User_Department(userAdminView.User.IdUser, department.IdDepartment);
+
                 }
 
                 _context.SaveChanges();
@@ -187,24 +234,19 @@ namespace VotingApp.Services
             else
             {
 
-                var temp = _context.Users.Where(u => u.IdUser == userAdminView.User.IdUser)
-                         .Select(u => new User(userAdminView.User.Username, userAdminView.User.FirstName,
+                _userRepo.Update(new User(userAdminView.User.IdUser,userAdminView.User.Username, userAdminView.User.FirstName,
                                               userAdminView.User.LastName, userAdminView.User.NrMatricol,
-                                              userAdminView.User.Email, false))
-                         .ToList();
+                                              userAdminView.User.Email, false));
 
 
-                var temp1 = _context.Users_Roles.Where(u => u.IdUser == userAdminView.User.IdUser)
-                          .Select(u => new User_Role(userAdminView.Role.IdRole, userAdminView.User.IdUser))
-                          .ToList();
+                //poate mai avea si mai multe roluri
+                AddToKeylessTable.UpdateTable_User_Role(userAdminView.User.IdUser, userAdminView.Role.IdRole);
 
 
                 foreach (var department in userAdminView.Departments)
                 {
 
-                    var temp2 = _context.Users_Departments.Where(d => d.IdUser == userAdminView.User.IdUser)
-                          .Select(d => new User_Department(userAdminView.User.IdUser, department.IdDepartment))
-                          .ToList();
+                    AddToKeylessTable.UpdateTable_User_Department(userAdminView.User.IdUser, department.IdDepartment);
 
                 }
 
@@ -213,6 +255,7 @@ namespace VotingApp.Services
 
         }
 
+        //cascade delete,votes,user-election,cadidates
         public void DeleteUserForAdmin(int id)
         {
             var user_role = _context.Users_Roles;

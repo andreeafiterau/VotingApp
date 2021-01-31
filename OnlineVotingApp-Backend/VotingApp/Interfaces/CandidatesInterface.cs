@@ -10,6 +10,6 @@ namespace VotingApp.Interfaces
     {
         IEnumerable<Candidate> GetCandidates(int IdElectoralRoom);
 
-        void AddCandidateOnElectoralRoom(int IdElectoralRoom, int IdCandidate);
+        //void AddCandidateOnElectoralRoom(int IdElectoralRoom, int IdCandidate);
     }
 }

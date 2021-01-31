@@ -43,10 +43,10 @@ namespace VotingApp.Entities
         [StringLength(25)]
         public string Username { get; set; }
 
-        [Required]
+        
         public byte[] PasswordHash { get; set; }
 
-        [Required]
+        
         public byte[] PasswordSalt { get; set; }
 
         [Required]

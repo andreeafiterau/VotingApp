@@ -20,7 +20,7 @@ namespace VotingApp.Entities
         [Required]
         public int IdRole { get; set; }
 
-        [Required]
+        
         [StringLength(50)]
         public string RoleName { get; set; }
     }

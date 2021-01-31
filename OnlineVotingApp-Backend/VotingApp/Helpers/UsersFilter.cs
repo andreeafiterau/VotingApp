@@ -11,13 +11,13 @@ namespace VotingApp.Helpers
     {
         public static string CreateQueryString(ObjectForUsersFilter objectForUsersFilter)
         {
-            string firstPart = "SELECT IdUser, Username,FirstName,LastName,NrMatricol,Email,IsAccountActive," +
+            string firstPart = "SELECT Users.IdUser, Username,FirstName,LastName,NrMatricol,Email,IsAccountActive," +
                                 "Roles.IdRole,Roles.RoleName,Colleges.IdCollege,Colleges.CollegeName," +
-                                "Departments.IdDepartment,Departments.DepartmentName FROM Users"+               
+                                "Departments.IdDepartment,Departments.DepartmentName FROM Users "+               
                                   "INNER JOIN Users_Roles on Users.IdUser = Users_Roles.IdUser " +
-                                  "INNER JOIN Roles on User_Roles.IdRole = Roles.IdRole " +
+                                  "INNER JOIN Roles on Users_Roles.IdRole = Roles.IdRole " +
                                   "INNER JOIN Users_Departments on Users.IdUser = Users_Departments.IdUser " +
-                                  "INNER JOIN Departments on Departments.IdDepartment = Users_Departments.IdDepartment"+
+                                  "INNER JOIN Departments on Departments.IdDepartment = Users_Departments.IdDepartment "+
                                   "INNER JOIN Colleges on Departments.IdCollege = Colleges.IdCollege WHERE ";
 
             string secondPart = "";
@@ -43,7 +43,7 @@ namespace VotingApp.Helpers
 
         public static IList<UserAdminView> GetFilteredUsers(ObjectForUsersFilter objectForUsersFilter)
         {
-            using (SqlConnection con = new SqlConnection("Server=DESKTOP-RPNBQ1M;Integrated Security=true;Database=OnlineVotingApp;"))
+            using (SqlConnection con = new SqlConnection("Server=DESKTOP-RPNBQ1M;Integrated Security=true;Database=VotingApp;"))
             {
                 con.Open();
 

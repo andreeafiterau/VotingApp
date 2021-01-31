@@ -8,9 +8,11 @@ namespace VotingApp.Interfaces
 {
     public interface IUsersInterface 
     {
-        //User Authenticate(string username, string password);
+        void ChangePassword(User user,string password);
 
-        //User Create(User user, string password);
+        User Authenticate(string username, string password);
+
+        User Create(User user, string password);
 
         IEnumerable<UserAdminView> GetAllUsersForAdmin(ObjectForUsersFilter objectForUsersFilter);
 

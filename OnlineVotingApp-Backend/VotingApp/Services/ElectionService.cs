@@ -22,29 +22,43 @@ namespace VotingApp.Services
 
             foreach( User user in filteredUsers)
             {
-                _context.Election_Users.Add(new Election_User(IdElectoralRoom, user.IdUser));
+                AddToKeylessTable.AddToTable_Election_Users(IdElectoralRoom, user.IdUser);
             }
         }
 
         public IEnumerable<User> GetUsersForElection(ObjectForUsersFilter objectForUsersFilter, int IdElectoralRoom)
         {
-            var filteredUsers = AddUserForElectionFilter.GetFilteredUsersForElection(objectForUsersFilter);
+            List<User> filteredUsers = AddUserForElectionFilter.GetFilteredUsersForElection(objectForUsersFilter).ToList();
 
             var election_user = _context.Election_Users;
+            var users = _context.Users;
 
             var result = from eu in election_user
-                         join f in filteredUsers on eu.IdUser equals f.IdUser
+                         join u in users on eu.IdUser equals u.IdUser
                          where eu.IdElectoralRoom == IdElectoralRoom
-                         select new User { IdUser= f.IdUser,
-                                           Username=f.Username,
-                                           FirstName=f.FirstName,
-                                           LastName= f.LastName,
-                                           NrMatricol=f.NrMatricol,
-                                           Email=f.Email,
-                                           IsAccountActive=f.IsAccountActive
-                                          };
+                         select new User
+                         {
+                             IdUser = u.IdUser,
+                             Username = u.Username,
+                             FirstName = u.FirstName,
+                             LastName = u.LastName,
+                             NrMatricol = u.NrMatricol,
+                             Email = u.Email,
+                             IsAccountActive = u.IsAccountActive
+                         };
 
-            return result;
+            List<User> finalRes = new List<User>();
+
+            foreach(var u in result)
+            {
+                if (filteredUsers.Exists(user=>user.IdUser==u.IdUser))
+                {
+                    finalRes.Add(u);
+                }
+            }
+            
+
+            return finalRes;
 
         }
     }
