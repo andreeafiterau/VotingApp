@@ -69,6 +69,30 @@ namespace VotingApp.Controllers
             }
         }
 
+        
+
+        [HttpPut("activateUser")]
+        public IActionResult ActivateUser([FromBody] UserActivationViewDto userActivationViewDto)
+        {
+            var userActivationView = Mapper.Map<UserActivationView>(userActivationViewDto);
+
+            var user = new User(userActivationView.IdUser, userActivationView.Username, userActivationView.FirstName,
+                                userActivationView.LastName, userActivationView.NrMatricol,
+                                userActivationView.Email, userActivationView.IsAccountActive);
+
+            try
+            {
+                _userService.Create(user, userActivationView.Password, userActivationView.ActivationCode);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+
+        }
+
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody]UserAdminViewDto userAdminViewDto)
         {

@@ -15,10 +15,11 @@ namespace VotingApp.Services
         private IRepository<Activation_Code> _activationCodeRepo;
         
 
-        public UsersService(MasterContext context,IRepository<User> userRepo)
+        public UsersService(MasterContext context,IRepository<User> userRepo,IRepository<Activation_Code> activationCodeRepo)
         {
             _context = context;
             _userRepo = userRepo;
+            _activationCodeRepo = activationCodeRepo;
            
 
         }//CONSTRUCTOR
@@ -72,8 +73,7 @@ namespace VotingApp.Services
         {
             var activationKey = Guid.NewGuid().ToString();
 
-            var activationKeyAlreadyExists =
-             _activationCodeRepo.GetAll().Any(key => key.Code == activationKey);
+            var activationKeyAlreadyExists = _activationCodeRepo.GetAll().Any(a => a.Code == activationKey);
 
             if (activationKeyAlreadyExists)
             {
@@ -85,7 +85,8 @@ namespace VotingApp.Services
 
         public void AddActivationKeyToTable(string Key,int IdUser)
         {
-            _activationCodeRepo.Insert(new Activation_Code(Key,IdUser));
+            Activation_Code activation_code = new Activation_Code(Key, IdUser);
+            _activationCodeRepo.Insert(activation_code);
         }
 
         public bool VerifyActivationCode(string Key,int idUser)

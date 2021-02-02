@@ -54,7 +54,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             }
         }
 
-        [HttpPost]
+        [HttpPost("vote")]
         public IActionResult Vote([FromBody] VotesDto voteDto)
         {
             // map dto to entity

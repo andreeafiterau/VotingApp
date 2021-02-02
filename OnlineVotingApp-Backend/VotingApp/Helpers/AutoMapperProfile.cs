@@ -28,6 +28,10 @@ namespace VotingApp.Helpers
             CreateMap<College_Dto, College>();
             CreateMap<Department, DepartmentDto>();
             CreateMap<DepartmentDto, Department>();
+            CreateMap<UserActivationView, UserActivationViewDto>();
+            CreateMap<UserActivationViewDto, UserActivationView>();
+            CreateMap<Vote, VotesDto>();
+            CreateMap<VotesDto, Vote>();
 
         }//CONSTRUCTOR
     }

@@ -19,6 +19,8 @@ namespace VotingApp.Entities
             IsAccountActive = isAccountActive;
         }
 
+       
+
         public User(string username, string firstName, string lastName, string nrMatricol, string email, bool isAccountActive)
         {
             Username = username;
