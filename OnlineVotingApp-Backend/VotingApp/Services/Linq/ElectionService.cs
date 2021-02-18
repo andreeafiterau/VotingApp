@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using VotingApp.Entities;
 using VotingApp.Helpers;
 using VotingApp.Interfaces;
+using VotingApp.Services.Queries;
 
 namespace VotingApp.Services
 {
@@ -18,7 +19,7 @@ namespace VotingApp.Services
 
         public void AddUsersForElection(ObjectForUsersFilter objectForUsersFilter,int IdElectoralRoom)
         {
-            var filteredUsers=AddUserForElectionFilter.GetFilteredUsersForElection(objectForUsersFilter);
+            var filteredUsers=ElectionFilter.GetFilteredUsersForElection(objectForUsersFilter);
 
             foreach( User user in filteredUsers)
             {
@@ -28,7 +29,7 @@ namespace VotingApp.Services
 
         public IEnumerable<User> GetUsersForElection(ObjectForUsersFilter objectForUsersFilter, int IdElectoralRoom)
         {
-            List<User> filteredUsers = AddUserForElectionFilter.GetFilteredUsersForElection(objectForUsersFilter).ToList();
+            List<User> filteredUsers = ElectionFilter.GetFilteredUsersForElection(objectForUsersFilter).ToList();
 
             var election_user = _context.Election_Users;
             var users = _context.Users;
@@ -60,6 +61,37 @@ namespace VotingApp.Services
 
             return finalRes;
 
+        }
+
+        public IEnumerable<Results> GetResults(int IdElectoralRoom)
+        {
+            var us = _context.Users;
+            var cand = _context.Candidates;
+
+            var candidates = from cc in cand
+                             join  u in us on cc.IdUser equals u.IdUser
+                    where cc.IdElectoralRoom == IdElectoralRoom
+                    select new
+                    {
+                        cc.IdElectoralRoom,
+                        cc.IdCandidate,
+                        cc.IdUser,
+                        u.FirstName,
+                        u.LastName
+                    };
+
+            IList<Results> resultList = new List<Results>();
+
+            foreach( var c in candidates)
+            {
+                int count=VoteCount.Count_Votes(c.IdCandidate);
+
+                Results results = new Results(c.IdCandidate, c.FirstName + " " + c.LastName, count);
+
+                resultList.Add(results);
+            }
+
+            return resultList;
         }
     }
 }

@@ -54,12 +54,32 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             }
         }
 
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpPost("{id}")]
+        public IActionResult GetResults(int id)
         {
-            Repository.Delete(id);
-            return Ok();
+           
+            try
+            {
+                // save 
+                var res=ElectionService.GetResults(id);
+
+                var resDto = Mapper.Map<ResultDto>(res);
+
+                return Ok(resDto);
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
+
+        //[HttpDelete("{id}")]
+        //public IActionResult Delete(int id)
+        //{
+        //    Repository.Delete(id);
+        //    return Ok();
+        //}
     }
 }

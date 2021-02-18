@@ -8,6 +8,8 @@ namespace VotingApp.Interfaces
 {
     public interface IUsersInterface 
     {
+
+        void SendActivationCode(string email, string activationCode);
         void AddActivationKeyToTable(string Key, int IdUser);
         string CreateActivationKey();
         void ChangePassword(User user,string password);

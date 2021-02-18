@@ -11,5 +11,7 @@ namespace VotingApp.Interfaces
         void AddUsersForElection(ObjectForUsersFilter objectForUsersFilter, int IdElectoralRoom);
 
         IEnumerable<User> GetUsersForElection(ObjectForUsersFilter objectForUsersFilter, int IdElectoralRoom);
+
+        IEnumerable<Results> GetResults(int idElectoralRoom);
     }
 }

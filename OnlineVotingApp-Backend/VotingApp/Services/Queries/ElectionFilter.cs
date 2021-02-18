@@ -7,7 +7,7 @@ using VotingApp.Entities;
 
 namespace VotingApp.Helpers
 {
-    public class AddUserForElectionFilter
+    public class ElectionFilter
     {
         public static string CreateQueryString(ObjectForUsersFilter objectForUsersFilter)
         {

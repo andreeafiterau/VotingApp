@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using VotingApp.Entities;
 using VotingApp.Helpers;
 using VotingApp.Interfaces;
@@ -27,7 +29,7 @@ namespace VotingApp.Services
         public User Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-                return null;
+                return null;//arg null
 
             var user = _context.Users.SingleOrDefault(x => x.Username == username);
 
@@ -44,7 +46,7 @@ namespace VotingApp.Services
 
         }//METHOD Authenticate
 
-        public User Create(User user, string password, string activationCode)
+        public User Create(User user, string password, string activationCode)//change name
         {
             if(!VerifyActivationCode(activationCode,user.IdUser))
                 throw new Exception("Activation Code is not correct");
@@ -73,6 +75,7 @@ namespace VotingApp.Services
         {
             var activationKey = Guid.NewGuid().ToString();
 
+            //act code.getall poate sa fie null
             var activationKeyAlreadyExists = _activationCodeRepo.GetAll().Any(a => a.Code == activationKey);
 
             if (activationKeyAlreadyExists)
@@ -103,40 +106,7 @@ namespace VotingApp.Services
 
             return false;
         }
-        //public void Update(User userParam, string password = null)
-        //{
-        //    var user = _context.Users.Find(userParam.IdUser);
-
-        //    if (user == null)
-        //        throw new Exception("User not found");
-
-        //    if (userParam.Username != user.Username)
-        //    {
-        //        username has changed so check if the new username is already taken
-        //        if (_context.Users.Any(x => x.Username == userParam.Username))
-        //            throw new Exception("Username " + userParam.Username + " is already taken");
-        //    }
-
-        //    update user properties
-        //    user.Email = userParam.Email;
-        //    user.Username = userParam.Username;
-        //    user.IsAccountActive = userParam.IsAccountActive;
-
-        //    update password if it was entered
-        //    if (!string.IsNullOrWhiteSpace(password))
-        //    {
-        //        byte[] passwordHash, passwordSalt;
-        //        CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
-        //        user.PasswordHash = passwordHash;
-        //        user.PasswordSalt = passwordSalt;
-        //    }
-
-        //    _context.Users.Update(user);
-        //    _context.SaveChanges();
-
-        //}//METHOD Update
-
+       
         public void ChangePassword(User user,string password)
         {
             // validation
@@ -151,6 +121,18 @@ namespace VotingApp.Services
 
             _context.Users.Update(user);
             _context.SaveChanges();
+        }
+
+        public void SendActivationCode(string email,string activationCode)
+        {
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("andreea.fiterau96@gmail.com", "Fa04volei/ro"),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send("andreea.fiterau96@gmail.com",email, "ActivationCode", "The activation code is:"+ activationCode);
         }
 
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

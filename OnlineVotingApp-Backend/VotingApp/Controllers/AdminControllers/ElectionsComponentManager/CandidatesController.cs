@@ -54,24 +54,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             }
         }
 
-        [HttpPost("vote")]
-        public IActionResult Vote([FromBody] VotesDto voteDto)
-        {
-            // map dto to entity
-            var vote = Mapper.Map<Vote>(voteDto);
-
-            try
-            {
-                // save 
-                AddToKeylessTable.AddToTable_Vote(vote.IdUser,vote.IdCandidate);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                // return error message if there was an exception
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+        
 
         //[HttpPost("{idElectoralRoom}/{idCandidate}")]
         //public IActionResult AddElectoralRoom(int idElectoralRoom, int idCandidate)

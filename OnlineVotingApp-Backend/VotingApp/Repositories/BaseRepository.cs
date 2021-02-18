@@ -18,25 +18,28 @@ namespace VotingApp
             dbSet = context.Set<TEntity>();
         }
 
+        //verific inainte
         public TEntity GetByID(int id)
         {
+            //rezultatul poate sa fie null, argumentul poate sa fie null
             return dbSet.Find(id);           
         }
 
         public TEntity Insert(TEntity entity)
         {
+            //entitatea poate sa fie nula sau poate sa fie formatata gresit
             dbSet.Add(entity);
-             _context.SaveChanges();
-
+             _context.SaveChanges();//sys errors
+            //string =! entity
             return entity;
         }
 
         public void Delete(int id)
         {
-            TEntity entity=dbSet.Find(id);
+            TEntity entity=dbSet.Find(id);//argument null, rez null
               
             dbSet.Remove(entity);
-            _context.SaveChanges();
+            _context.SaveChanges();//idem mai sus
             
 
         }
@@ -46,13 +49,13 @@ namespace VotingApp
             dbSet.Attach(entityToUpdate);
             _context.Entry(entityToUpdate).State = EntityState.Modified;
 
-            _context.SaveChanges();
+            _context.SaveChanges();//idem sus
 
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            return _context.Set<TEntity>().ToList();
+            return _context.Set<TEntity>().ToList();//lista nula
         }
     }
 }
