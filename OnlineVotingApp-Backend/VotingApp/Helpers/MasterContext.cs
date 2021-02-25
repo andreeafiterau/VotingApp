@@ -28,9 +28,8 @@ namespace VotingApp.Helpers
         public DbSet<College> Colleges { get; set; }
 
         public DbSet<Activation_Code> Activation_Codes { get; set; }
-
-      
-
+     
+        public DbSet<PasswordToken> PasswordTokens { get; set; }
 
 
     }

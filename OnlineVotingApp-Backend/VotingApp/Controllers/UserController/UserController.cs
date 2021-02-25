@@ -35,14 +35,17 @@ namespace VotingApp.Controllers.UserController
             _appSettings = appSettings.Value;
         }
 
-        [HttpPost("createActivationCode/{idUser}")]
-        public IActionResult CreateActivationCode(int idUser)
+
+        [HttpPost("sendActivationCode")]
+        public IActionResult SendActivationCode([FromBody] UserDto userDto)
         {
             try
             {
                 var activationCode = UsersService.CreateActivationKey();
 
-                UsersService.AddActivationKeyToTable(activationCode, idUser);
+                UsersService.AddActivationKeyToTable(activationCode, UsersService.FindUser(userDto.Email));
+
+                UsersService.SendActivationCode(userDto.Email, activationCode);
 
                 return Ok();
             }
@@ -54,16 +57,16 @@ namespace VotingApp.Controllers.UserController
 
         }
 
-        [HttpPost("sendActivationCode/{idUser}")]
-        public IActionResult SendActivationCode([FromBody] string Email, int idUser)
+        [HttpPost("sendPasswordToken")]
+        public IActionResult SendPasswordToken([FromBody] UserDto userDto)
         {
             try
             {
-                var activationCode = UsersService.CreateActivationKey();
+                var passwordToken = UsersService.CreateActivationKey();
 
-                UsersService.AddActivationKeyToTable(activationCode, idUser);
+                UsersService.AddPasswordTokenToTable(passwordToken, UsersService.FindUser(userDto.Email));
 
-                UsersService.SendActivationCode(Email, activationCode);
+                UsersService.SendPasswordToken(userDto.Email, passwordToken);
 
                 return Ok();
             }
@@ -73,21 +76,35 @@ namespace VotingApp.Controllers.UserController
                 return BadRequest(new { message = ex.Message });
             }
 
+        }
+
+        [HttpPut("forgotPassword")]
+        public IActionResult ForgotPasswordUpdate([FromBody] UserActivationViewDto userActivationViewDto)
+        {
+            User user = UsersService.FindUserForActivation(userActivationViewDto.Email);
+
+            try
+            {
+                //schimba numele functiei
+                UsersService.ForgotPasswordUpdate(user, userActivationViewDto.Password, userActivationViewDto.Code);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut("activateUser")]
         public IActionResult ActivateUser([FromBody] UserActivationViewDto userActivationViewDto)
         {
-            var userActivationView = Mapper.Map<UserActivationView>(userActivationViewDto);
-
-            var user = new User(userActivationView.IdUser, userActivationView.Username, userActivationView.FirstName,
-                                userActivationView.LastName, userActivationView.NrMatricol,
-                                userActivationView.Email, userActivationView.IsAccountActive);
+            User user=UsersService.FindUserForActivation(userActivationViewDto.Email);
 
             try
             {
                 //schimba numele functiei
-                UsersService.Create(user, userActivationView.Password, userActivationView.ActivationCode);
+                UsersService.ActivateUser(user, userActivationViewDto.Password, userActivationViewDto.Code);
                 return Ok();
             }
             catch (Exception ex)
@@ -150,13 +167,14 @@ namespace VotingApp.Controllers.UserController
         public IActionResult ChangePassword([FromBody]UserDto userDto)
         {
             string password = userDto.Password;
+            string username = userDto.Username;
             // map dto to entity and set id
-            var user = Mapper.Map<User>(userDto);
+            //var user = Mapper.Map<User>(userDto);
 
             try
             {
                 // save 
-                UsersService.ChangePassword(user, password);
+                UsersService.ChangePassword(username, password);
                 return Ok();
             }
             catch (Exception ex)

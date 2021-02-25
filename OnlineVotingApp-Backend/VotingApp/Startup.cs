@@ -88,7 +88,7 @@ namespace VotingApp
             services.AddScoped<ICandidateInterface, CandidatesService>();
             services.AddScoped<IRepository<Candidate>, BaseRepository<Candidate>>();
             services.AddScoped<IRepository<Activation_Code>, BaseRepository<Activation_Code>>();
-
+            services.AddScoped<IRepository<PasswordToken>, BaseRepository<PasswordToken>>();
 
         }
 

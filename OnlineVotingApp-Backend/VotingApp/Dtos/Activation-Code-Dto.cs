@@ -4,6 +4,8 @@
     {
         public int IdCode { get; set; }
 
+        public int Code { get; set; }
+
         public int IdUser { get; set; }
     }
 }

@@ -15,13 +15,15 @@ namespace VotingApp.Services
         private MasterContext _context;
         private IRepository<User> _userRepo;
         private IRepository<Activation_Code> _activationCodeRepo;
+        private IRepository<PasswordToken> _passwordTokenRepo;
         
 
-        public UsersService(MasterContext context,IRepository<User> userRepo,IRepository<Activation_Code> activationCodeRepo)
+        public UsersService(MasterContext context,IRepository<User> userRepo,IRepository<Activation_Code> activationCodeRepo,IRepository<PasswordToken> passwordTokenRepo)
         {
             _context = context;
             _userRepo = userRepo;
             _activationCodeRepo = activationCodeRepo;
+            _passwordTokenRepo = passwordTokenRepo;
            
 
         }//CONSTRUCTOR
@@ -46,7 +48,31 @@ namespace VotingApp.Services
 
         }//METHOD Authenticate
 
-        public User Create(User user, string password, string activationCode)//change name
+        public User ForgotPasswordUpdate(User user,string password, string passwordToken)
+        {
+            if (!VerifyPasswordToken(passwordToken, user.IdUser))
+                throw new Exception("Password Token is not correct");
+
+            // validation
+            if (string.IsNullOrWhiteSpace(password))
+                throw new Exception("Password is required");
+
+            byte[] passwordHash, passwordSalt;
+            CreatePasswordHash(password, out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+            user.IsAccountActive = true;
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            //activation code delete after user id
+
+            return user;
+        }
+
+        public User ActivateUser(User user, string password, string activationCode)
         {
             if(!VerifyActivationCode(activationCode,user.IdUser))
                 throw new Exception("Activation Code is not correct");
@@ -71,6 +97,10 @@ namespace VotingApp.Services
 
         }//METHOD Create
 
+        public User FindUserForActivation(string Email)
+        {
+            return _context.Users.SingleOrDefault(user => user.Email == Email);
+        }
         public string CreateActivationKey()
         {
             var activationKey = Guid.NewGuid().ToString();
@@ -92,26 +122,49 @@ namespace VotingApp.Services
             _activationCodeRepo.Insert(activation_code);
         }
 
+        public void AddPasswordTokenToTable(string Token,int IdUser)
+        {
+            PasswordToken passwordToken = new PasswordToken(Token, IdUser);
+            _passwordTokenRepo.Insert(passwordToken);
+        }
+
         public bool VerifyActivationCode(string Key,int idUser)
         {
             //get after idUser
-            var codeFromTable = _activationCodeRepo.GetAll().Where(user => user.IdUser == idUser);
-            foreach(var code in codeFromTable)
+            var codeFromTable = _context.Activation_Codes.SingleOrDefault(user => user.IdUser == idUser).Code;
+           
+            if(codeFromTable != Key)
             {
-                if(code.Code==Key)
-                {
-                    return true;
-                }
+                return false;
             }
 
-            return false;
+            return true;
         }
-       
-        public void ChangePassword(User user,string password)
+
+        public bool VerifyPasswordToken(string Token, int IdUser)
+        {
+            //get after idUser
+            var codeFromTable = _context.PasswordTokens.SingleOrDefault(user => user.IdUser == IdUser).Token;
+
+            if (codeFromTable != Token)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public void ChangePassword(string username,string password)
         {
             // validation
-            if (string.IsNullOrWhiteSpace(password))
-                throw new Exception("Password is required");
+            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(username))
+                throw new Exception("Password or username is required");
+
+            User user = new User();
+            user = _context.Users.SingleOrDefault(user => user.Username == username);
+
+            if (user == null)
+                throw new Exception("Username incorrect");
 
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
@@ -121,6 +174,16 @@ namespace VotingApp.Services
 
             _context.Users.Update(user);
             _context.SaveChanges();
+        }
+
+        public int FindUser(string email)
+        {
+            var user= _context.Users.SingleOrDefault(user => user.Email == email);
+
+            if (user == null)
+                   throw new Exception("Email is incorrect");
+
+            return user.IdUser;
         }
 
         public void SendActivationCode(string email,string activationCode)
@@ -251,6 +314,19 @@ namespace VotingApp.Services
 
             _context.SaveChanges();
 
+        }
+
+        public void SendPasswordToken(string Email, string PasswordToken)
+        {
+           
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("andreea.fiterau96@gmail.com", "Fa04volei/ro"),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send("andreea.fiterau96@gmail.com", Email, "Password Token", "The password token is: " + PasswordToken);
         }
 
     }

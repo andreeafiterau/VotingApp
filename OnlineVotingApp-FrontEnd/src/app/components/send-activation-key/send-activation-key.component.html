@@ -1,0 +1,14 @@
+<h2>Send Activation Key</h2>
+<form [formGroup]="sendActivationForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && sendActivationForm.controls.email.errors }" />
+        <div *ngIf="submitted && sendActivationForm.controls.email.errors" class="invalid-feedback">
+            <div *ngIf="sendActivationForm.controls.email.errors.required">Email is required</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <button [disabled]="loading" class="btn btn-primary">Send activation code</button>
+    </div>
+</form>

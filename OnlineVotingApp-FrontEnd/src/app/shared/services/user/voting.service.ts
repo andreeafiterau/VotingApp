@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Vote } from 'src/app/models/vote';
+import { Vote } from 'src/app/shared/models/vote';
 
 
 @Injectable({ providedIn: 'root' })
