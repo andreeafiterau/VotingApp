@@ -12,6 +12,7 @@ export class UserService {
 
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
+    user=new User();
 
     constructor(private http: HttpClient,private router: Router){ 
 
@@ -57,8 +58,8 @@ export class UserService {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     this.currentUserSubject.next(user);
+                    this.user=user;
                 }
-
                 return user;
             }));
     }

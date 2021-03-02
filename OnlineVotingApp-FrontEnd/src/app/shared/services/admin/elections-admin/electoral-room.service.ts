@@ -4,11 +4,11 @@ import { ElectoralRoom } from 'src/app/shared/models/electoral-room';
 
 
 @Injectable({ providedIn: 'root' })
-export class DepartmentService {
+export class ElectoralRoomService {
     constructor(private http: HttpClient) { }
 
     getAll() {
-        return this.http.get<ElectoralRoom[]>(`http://locahost:4001/electoralRoom`);
+        return this.http.get<ElectoralRoom[]>(`http://localhost:4001/electoralRoom`);
     }
 
     add(electoralRoom:ElectoralRoom){

@@ -328,7 +328,6 @@ namespace VotingApp.Services
 
             smtpClient.Send("andreea.fiterau96@gmail.com", Email, "Password Token", "The password token is: " + PasswordToken);
         }
-
     }
 }
 
