@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-xl navbar-dark bg-primary">
+<!-- <nav class="navbar navbar-expand-xl navbar-dark bg-primary">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -8,4 +8,29 @@
          <a class="nav-item nav-link" href="/login" (click)="logout()">Logout</a>  
       </div>     
    </div>               
-</nav>
+</nav> -->
+
+<p>
+   <mat-toolbar>
+     <a  mat-button href="/changePassword">Change password</a>
+     <a mat-button href="/login" style="margin-right: 1250px;" (click)="logout()">Logout</a>
+
+   <div *ngIf="isAdmin">
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>
+      <a mat-button href="/users">Users</a>
+    </button>
+    <button mat-menu-item>
+      <a mat-button href="/colleges">Colleges</a>
+    </button>
+    <button mat-menu-item>
+      <a  mat-button href="/elections">Elections</a>
+    </button>
+  </mat-menu>
+  </div>
+   </mat-toolbar>
+ </p>
+ 

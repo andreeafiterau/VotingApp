@@ -1,6 +1,8 @@
 export class ElectoralRoom{
 
     idElectoralRoom:number;
-    electoralRoomName:string;
+    idElectionType:number;
     date:string;
+    idCollege:number;
+    idDepartment:number;
 }

@@ -10,19 +10,20 @@ export class AlertService {
     constructor(private router: Router) {
         // clear alert message on route change
         router.events.subscribe(event => {
-            if (event instanceof NavigationStart) {
-                if (this.keepAfterNavigationChange) {
-                    // only keep for a single location change
-                    this.keepAfterNavigationChange = false;
-                } else {
+            // if (event instanceof NavigationStart) {
+            //     if (this.keepAfterNavigationChange) {
+            //         // only keep for a single location change
+            //         this.keepAfterNavigationChange = false;
+            //     } else {
                     // clear alert
                     this.subject.next();
-                }
-            }
+                // }
+            // }
         });
     }
 
     success(message: string, keepAfterNavigationChange = false) {
+
         this.keepAfterNavigationChange = keepAfterNavigationChange;
         this.subject.next({ type: 'success', text: message });
     }

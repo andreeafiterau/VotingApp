@@ -2,9 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { first } from "rxjs/operators";
+import { AlertComponent } from "src/app/shared/components/alert/alert.component";
+import { AlertService } from "src/app/shared/services/others/alert.service";
 import { UserService } from "src/app/shared/services/user/user.service";
 
-@Component({templateUrl: 'forgot-password.component.html'})
+@Component({templateUrl: 'forgot-password.component.html',styleUrls:['./forgot-password.component.css']})
 
 export class ForgotPasswordComponent implements OnInit{
 
@@ -13,12 +15,15 @@ export class ForgotPasswordComponent implements OnInit{
     submitted = false;
     differentPasswords = false;
     showInput=false;
+    disableEmail=false;
+    hideSendTokenButton=true;
 
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private userService: UserService
+        private userService: UserService,
+        private alertService:AlertService
     ) {}
     
 
@@ -32,8 +37,18 @@ export class ForgotPasswordComponent implements OnInit{
 
     sendToken(){
 
+        this.submitted=true;
+
+        if(this.forgotPasswordForm.controls.email.invalid)
+        {
+            return;
+        }
+
         this.userService.sendPasswordToken(this.forgotPasswordForm.controls.email.value).pipe(first()).
-                         subscribe(data=>this.showInput=true, error=>console.log(error));
+                         subscribe(data=>{this.showInput=true;this.hideSendTokenButton=false;}, error=>this.alertService.error(error.error.message));
+
+        this.disableEmail=true;
+        this.submitted=false;   
     }
 
     onSubmit() {
@@ -60,9 +75,11 @@ export class ForgotPasswordComponent implements OnInit{
                                         pipe(first()).
                                         subscribe(data => {
                                             this.router.navigate(['login']);
+                                            this.alertService.success("The password has been succesfully changed");
                                         },
                                                   error => {
-                                            console.log(error);            
+                                            this.alertService.error(error.error.message);
+                                                      
                                             this.loading = false;
                                             });
         }

@@ -3,12 +3,14 @@ import { Router } from '@angular/router';
 import { UserService } from './shared/services/user/user.service';
 import { User } from './shared/models/user';
 import { Subject } from 'rxjs';
+import { UserAdminView } from './shared/models/user-admin-view';
+import { UserAuthenticationView } from './shared/models/user-auth-view';
 
 @Component({ selector: 'app-root', templateUrl: 'app.component.html'})
 
 export class AppComponent implements OnInit{
 
-    currentUser: User;
+    currentUser: UserAuthenticationView=new UserAuthenticationView();
     userActivity;
     userInactive: Subject<any> = new Subject();
 

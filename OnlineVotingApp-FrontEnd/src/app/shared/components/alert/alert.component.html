@@ -1,1 +1,3 @@
-﻿<div *ngIf="message" [ngClass]="{ 'alert': message, 'alert-success': message.type === 'success', 'alert-danger': message.type === 'error' }">{{message.text}}</div>
+﻿<div *ngIf="message" id="alert" [ngClass]="{ 'alert': message, 'alert-success': message.type === 'success', 'alert-danger': message.type === 'error' }">{{message.text}}
+    <button class="close" mat-button (click)="onClick()" style=" float: right; margin-top: -6px;margin-right:-3px;"><mat-icon>close</mat-icon></button>
+</div>

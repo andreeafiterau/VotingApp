@@ -1,37 +1,47 @@
-<h2>Activate Account</h2>
-<form [formGroup]="activateAccount" (ngSubmit)="onSubmit()">
+<div class="container">
+
+<h2 style="margin-left: -30px;">Send Activation Key</h2>
+
+<br><br>
+
+<form [formGroup]="activationForm">
     <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && activateAccount.controls.email.errors }" />
-        <div *ngIf="submitted && activateAccount.controls.email.errors" class="invalid-feedback">
-            <div *ngIf="activateAccount.controls.email.errors.required">Email is required</div>
+        <input type="email" formControlName="email" class="form-control" [readonly]="disableEmail" [ngClass]="{ 'is-invalid': submitted && activationForm.controls.email.errors }" />
+        <div *ngIf="submitted && activationForm.controls.email.errors" class="invalid-feedback">
+            <div *ngIf="activationForm.controls.email.errors.required">Email is required</div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" *ngIf="sendActivationCodeButton">
+        <button mat-stroked-button (click)="sendActivationCode()">Send activation code</button>
+    </div>
+    <div class="form-group" *ngIf="showInputs" >
         <label for="activationKey">Activation Key</label>
-        <input type="text" formControlName="activationKey" class="form-control" [ngClass]="{ 'is-invalid': submitted && activateAccount.controls.activationKey.errors }" />
-        <div *ngIf="submitted && activateAccount.controls.activationKey.errors" class="invalid-feedback">
-            <div *ngIf="activateAccount.controls.activationKey.errors.required">Activation Key is required</div>
+        <input type="text" formControlName="activationKey" class="form-control" [ngClass]="{ 'is-invalid': submitted && activationForm.controls.activationKey.errors }" />
+        <div *ngIf="submitted && activationForm.controls.activationKey.errors" class="invalid-feedback">
+            <div *ngIf="activationForm.controls.activationKey.errors.required">Activation Key is required</div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" *ngIf="showInputs">
         <label for="password">Password</label>
-        <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && activateAccount.controls.password.errors }" />
-        <div *ngIf="submitted && activateAccount.controls.password.errors" class="invalid-feedback">
-            <div *ngIf="activateAccount.controls.password.errors.required">Password is required</div>
+        <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && activationForm.controls.password.errors }" />
+        <div *ngIf="submitted && activationForm.controls.password.errors" class="invalid-feedback">
+            <div *ngIf="activationForm.controls.password.errors.required">Password is required</div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" *ngIf="showInputs">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': submitted && (activateAccount.controls.confirmPassword.errors || differentPasswords) }" />
-        <div *ngIf="submitted && activateAccount.controls.confirmPassword.errors" class="invalid-feedback">
-            <div *ngIf="activateAccount.controls.confirmPassword.errors.required">Confirmation of password is required</div>
+        <input type="password" formControlName="confirmPassword" class="form-control" [ngClass]="{ 'is-invalid': submitted && (activationForm.controls.confirmPassword.errors || differentPasswords) }" />
+        <div *ngIf="submitted && activationForm.controls.confirmPassword.errors" class="invalid-feedback">
+            <div *ngIf="activationForm.controls.confirmPassword.errors.required">Confirmation of password is required</div>
         </div>
         <div *ngIf="submitted && differentPasswords" class="invalid-feedback">
             <div *ngIf="submitted && differentPasswords">Passwords must be the same</div>
         </div>
     </div>
-    <div class="form-group">
-        <button [disabled]="loading" class="btn btn-primary">Activate Account</button>
+    <div class="form-group" *ngIf="showInputs">
+        <button mat-stroked-button (click)="activateAccount()">Activate Account</button>
     </div>
 </form>
+</div>
+

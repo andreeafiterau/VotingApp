@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>Add Candidate</h1>
+
+<div mat-dialog-content>
+
+    <label *ngIf="noCandidates">No candidates to choose from</label>
+
+    <div *ngIf="!noCandidates">
+
+      <form [formGroup]="addCandidateForm">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Choose candidate</mat-label>
+            <mat-select [(value)]=selectedUser>
+              <mat-option *ngFor="let user of users" [value]="user">
+                {{user.user.firstName}} {{user.user.lastName}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        <br>
+        
+        <button mat-raised-button color="primary" (click)="addCandidate()">Add Candidate</button>
+
+    </form>
+    </div>
+   
+
+</div>
+
+

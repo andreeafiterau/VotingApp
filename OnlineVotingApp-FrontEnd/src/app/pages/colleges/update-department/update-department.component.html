@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Update Department</h1>
+
+<div mat-dialog-content>
+
+    <form [formGroup]="updateDepartmentForm">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Department Name</mat-label>
+            <input matInput formControlName="departmentName" placeholder="Department name">
+        </mat-form-field>
+        <br>
+        
+        <button mat-raised-button color="primary" (click)="updateDepartment()">Update Department</button>
+
+    </form>
+
+</div>

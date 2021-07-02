@@ -4,9 +4,11 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { first } from "rxjs/operators";
 import { User } from "src/app/shared/models/user";
+import { UserAdminView } from "src/app/shared/models/user-admin-view";
+import { UserAuthenticationView } from "src/app/shared/models/user-auth-view";
 import { UserService } from "src/app/shared/services/user/user.service";
 
-@Component({templateUrl: 'change-password.component.html'})
+@Component({templateUrl: 'change-password.component.html', styleUrls:['./change-password.component.css']})
 
 export class ChangePasswordComponent implements OnInit{
 
@@ -14,7 +16,7 @@ export class ChangePasswordComponent implements OnInit{
     loading = false;
     submitted = false;
     differentPasswords = false;
-    currentUser: User;
+    currentUser: UserAuthenticationView;
     currentUserSubscription: Subscription;
 
     constructor(
@@ -33,7 +35,7 @@ export class ChangePasswordComponent implements OnInit{
             confirmedPassword:['',Validators.required]
         });
     
-        console.log(this.currentUser.username);
+        //console.log(this.currentUser.user.);
     }
 
   
@@ -55,7 +57,7 @@ export class ChangePasswordComponent implements OnInit{
     
         this.loading = true;
 
-        console.log(this.currentUser.username);
+        //console.log(this.currentUser.username);
             
         this.userService.changePassword(this.currentUser.username,this.changePasswordForm.controls.newPassword.value).
                                         pipe(first()).

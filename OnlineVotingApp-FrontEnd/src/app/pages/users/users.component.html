@@ -1,0 +1,68 @@
+<nav-bar></nav-bar>
+<br>
+
+<div [style.visibility]="isReady ? 'visible' : 'hidden' ">
+
+  <mat-form-field style="margin-left:50px;width: 800px; margin-right:530px;">
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Name, username, email..." #input>
+  </mat-form-field>
+  
+  <button mat-button (click)="openDialogAddUser()">Add users  <mat-icon>library_add</mat-icon></button>
+  
+  <table *ngIf="isReady" style="width:1450px; margin-right:50px; margin-left:50px;" mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+  
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef> Username </th>
+      <td mat-cell *matCellDef="let element"> {{element.user.username}} </td>
+    </ng-container>
+  
+   
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef> First Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.user.firstName}} </td>
+    </ng-container>
+  
+    
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef> Last Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.user.lastName}} </td>
+    </ng-container>
+  
+    
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef > Email </th>
+      <td mat-cell *matCellDef="let element"> {{element.user.email}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"><button mat-button (click)="editUser(element)"><mat-icon>edit</mat-icon></button></td>
+    </ng-container>
+  
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"><button mat-button (click)="deleteUser(element)"><mat-icon>delete</mat-icon></button></td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No data in this table</td>
+    </tr>
+  
+  </table>
+  <mat-paginator [pageSizeOptions]="[10, 20]" showFirstLastButtons style="width:1450px; margin-right:50px; margin-left:50px;"></mat-paginator>
+</div>
+
+
+
+<!-- <br>
+
+<div align="center">
+    
+    <button class="btn btn-primary" style="margin-right:20px;"(click)="openDialogAddUser()">Add</button>
+    <button class="btn btn-primary" style="margin-right:20px;" (click)="deleteUser()">Delete</button>
+    <button class="btn btn-primary" (click)="openDialogUpdateUser()">Update</button>
+</div> -->

@@ -5,8 +5,8 @@ import { User } from "./user";
 
 export class UserAdminView{
 
-    user:User;
-    role:Role;
-    colleges:College[];
-    departments:Department[];
+    user:User=new User();
+    role:Role=new Role();
+    colleges:College[]=[];
+    departments:Department[]=[];
 }

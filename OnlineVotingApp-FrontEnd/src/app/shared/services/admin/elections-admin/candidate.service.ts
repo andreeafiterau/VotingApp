@@ -7,21 +7,25 @@ import { Candidate } from 'src/app/shared/models/candidate';
 export class CandidateService {
     constructor(private http: HttpClient) { }
 
-    getAll() {
-        return this.http.get<Candidate[]>(`http://locahost:4001/candidates`);
+    getAll(idElectoralRoom:number) {    
+        return this.http.get<Candidate[]>(`http://localhost:4001/candidates/${idElectoralRoom}`);
+    }
+
+    getPossibleCandidates(candidates:Candidate[]){
+        return this.http.post<Candidate[]>(`http://localhost:4001/candidates/getPossibleCandidates`,candidates);
     }
 
     add(candidate:Candidate){
-        return this.http.post(`http://locahost:4001/candidates`,candidate);
+        return this.http.post(`http://localhost:4001/candidates`,candidate);
     }
     
     update(candidate:Candidate, id:number){
 
-        return this.http.put(`http://locahost:4001/candidates/${id}`,candidate);
+        return this.http.put(`http://localhost:4001/candidates/${id}`,candidate);
     }
 
     delete(id:number){
 
-        return this.http.delete(`http://locahost:4001/candidates/${id}`);
+        return this.http.delete(`http://localhost:4001/candidates/${id}`);
     }
 }

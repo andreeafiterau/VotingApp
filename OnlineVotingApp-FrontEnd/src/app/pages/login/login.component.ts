@@ -6,7 +6,7 @@ import { first } from 'rxjs/operators';
 import { UserService } from 'src/app/shared/services/user/user.service';
 import { AlertService } from 'src/app/shared/services/others/alert.service';
 
-@Component({templateUrl: 'login.component.html'})
+@Component({templateUrl: 'login.component.html',styleUrls:['./login.component.css']})
 export class LoginComponent implements OnInit {
     loginForm: FormGroup;
     loading = false;
@@ -19,12 +19,7 @@ export class LoginComponent implements OnInit {
         private router: Router,
         private userService: UserService,
         private alertService:AlertService,
-    ) {
-        // // redirect to home if already logged in
-        // if (this.authenticationService.currentUserValue) { 
-        //     this.router.navigate(['/']);
-        // }
-    }
+    ) {}
 
     ngOnInit() {
         this.loginForm = this.formBuilder.group({
@@ -52,7 +47,14 @@ export class LoginComponent implements OnInit {
             .pipe(first())
             .subscribe(
                 data => {
-                    this.router.navigate(['home']);
+                    if(data?.role=='admin'){
+
+                        this.router.navigate(['users']);
+                    }
+                    else{
+                        this.router.navigate(['user-view']);
+                    }
+                    
                 },
                 error => {
                     console.log(error);

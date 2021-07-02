@@ -5,22 +5,24 @@ import { UserActivationView } from 'src/app/shared/models/user-activation-view';
 import { map } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { Role } from '../../models/role';
+import { UserAdminView } from '../../models/user-admin-view';
+import { UserAuthenticationView } from '../../models/user-auth-view';
 
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
 
-    private currentUserSubject: BehaviorSubject<User>;
-    public currentUser: Observable<User>;
-    user=new User();
+    private currentUserSubject: BehaviorSubject<UserAuthenticationView>;
+    public currentUser: Observable<UserAuthenticationView>;
 
     constructor(private http: HttpClient,private router: Router){ 
 
-        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
+        this.currentUserSubject = new BehaviorSubject<UserAuthenticationView>(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
-    public get currentUserValue(): User {
+    public get currentUserValue(): UserAuthenticationView {
         return this.currentUserSubject.value;
     }
 
@@ -58,10 +60,14 @@ export class UserService {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
                     localStorage.setItem('currentUser', JSON.stringify(user));
                     this.currentUserSubject.next(user);
-                    this.user=user;
                 }
                 return user;
             }));
+    }
+
+    getRole(idUser:number){
+
+        return this.http.post<Role>(`http://localhost:4001/user/getRole`,{idUser});
     }
 
     logout() {

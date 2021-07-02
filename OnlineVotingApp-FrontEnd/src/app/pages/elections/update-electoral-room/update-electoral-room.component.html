@@ -1,0 +1,45 @@
+<h1 mat-dialog-title>Update Electoral Room</h1>
+
+<div mat-dialog-content>
+
+    <form [formGroup]="updateElectoralRoomForm">
+        <mat-form-field appearance="fill">
+            <mat-label>Select election type</mat-label>
+            <mat-select [(value)]="selectedElectionType" (selectionChange)="onSelectionChangeElection($event)">
+              <mat-option *ngFor="let election of elections" [value]="election.idElectionType">
+                  {{election.electionName}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="fill">
+          <mat-label>Choose a date</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="date">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        <br>
+        <mat-form-field *ngIf="showCollege" appearance="fill">
+          <mat-label>Select college</mat-label>
+          <mat-select [(value)]="selectedCollege" (selectionChange)="onSelectionChange($event)">
+            <mat-option *ngFor="let college of colleges" [value]="college.idCollege">
+                {{college.collegeName}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field>
+      <br>
+      <mat-form-field *ngIf="showDep" appearance="fill">
+          <mat-label>Select department</mat-label>
+          <mat-select [(value)]="selectedDepartment">
+            <mat-option *ngFor="let department of departments" [value]="department.idDepartment">
+                {{department.departmentName}}
+            </mat-option>
+          </mat-select>
+      </mat-form-field> 
+      </form>
+      
+      <button mat-button (click)="updateElectoralRoom()">Update electoral room</button>
+
+</div>
+
+

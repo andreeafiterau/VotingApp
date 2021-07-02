@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Vote</h1>
+<div mat-dialog-content>
+
+  <mat-form-field>
+    <mat-label>Choose candidate</mat-label>
+    <mat-select [(value)]=selectedCandidate>
+      <mat-option *ngFor="let candidate of candidates" [value]="candidate">
+        {{candidate.firstName}} {{candidate.lastName}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+    <br><br>
+
+    <button mat-stroked-button (click)="vote()">Vote</button>
+
+</div>

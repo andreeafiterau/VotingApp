@@ -1,0 +1,62 @@
+<h1 mat-dialog-title>Add User</h1>
+<div mat-dialog-content>
+
+    <form [formGroup]="addUserForm">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" placeholder="Username">
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="fill">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="firstName" placeholder="First Name">
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="fill">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="lastName" placeholder="Last Name">
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="fill">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" placeholder="Email">
+        </mat-form-field>
+        <!-- <br>
+        <mat-form-field appearance="fill">
+            <mat-label>Numar Marticol</mat-label>
+            <input matInput formControlName="nrMatricol" placeholder="Numar Matricol">
+        </mat-form-field> -->
+        <br>
+        <mat-form-field appearance="fill">
+            <mat-label>Select role</mat-label>
+            <mat-select [(value)]="selectedRole">
+              <mat-option *ngFor="let role of roles" [value]="role.idRole">
+                  {{role.roleName}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="fill">
+            <mat-label>Select college</mat-label>
+            <mat-select [(value)]="selectedCollege"(selectionChange)="selectCollege($event)">
+              <mat-option *ngFor="let college of colleges" [value]="college.idCollege">
+                  {{college.collegeName}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br>
+        <mat-form-field appearance="fill">
+            <mat-label>Select department</mat-label>
+            <mat-select [(value)]="selectedDepartment">
+              <mat-option *ngFor="let department of departments" [value]="department.idDepartment">
+                  {{department.departmentName}}
+              </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <br>
+        <button mat-raised-button color="primary" (click)="addUser()">Add User</button>
+
+    </form>
+
+</div>

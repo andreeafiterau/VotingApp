@@ -1,0 +1,41 @@
+
+  <nav-bar></nav-bar>
+  
+  <div style="display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+  height:90%;">
+
+    <table class="table" align="center" style="width:1200px;">
+      <thead>     
+      </thead>
+      <tbody>
+          <tr style="background-color:#D5D5D5;" *ngFor="let pastElectoralRoom of pastElectoralRooms">
+              <td>{{pastElectoralRoom.electionName}}</td>
+              <td>{{pastElectoralRoom.electionDate | date:'medium'}}</td>
+              <td><button mat-stroked-button [disabled]="true" (click)="openVoteDialog(pastElectoralRoom.idElectoralRoom)">Vote</button></td>
+              <td><button mat-stroked-button (click)="seeResults(pastElectoralRoom.idElectoralRoom)">See results</button></td>
+          </tr>
+          
+          <tr style="background-color:#BCEECD;" *ngFor="let presentElectoralRoom of presentElectoralRooms">
+            <td>{{presentElectoralRoom.electionName}}</td>
+            <td>{{presentElectoralRoom.electionDate | date:'medium'}}</td>
+            <td><button mat-stroked-button [disabled]="hasVoted"(click)="openVoteDialog(presentElectoralRoom.idElectoralRoom)">Vote</button></td>
+            <td><button mat-stroked-button [disabled]="true">See results</button></td>
+        </tr>
+        
+        <tr  style="background-color:#C0D5F2;"*ngFor="let futureElectoralRoom of futureElectoralRooms">
+          <td>{{futureElectoralRoom.electionName}}</td>
+          <td>{{futureElectoralRoom.electionDate | date:'medium'}}</td>
+          <td><button mat-stroked-button [disabled]="true" (click)="openVoteDialog(futureElectoralRoom.idElectoralRoom)">Vote</button></td>
+          <td><button mat-stroked-button [disabled]="true">See results</button></td>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- <p>User view</p> -->

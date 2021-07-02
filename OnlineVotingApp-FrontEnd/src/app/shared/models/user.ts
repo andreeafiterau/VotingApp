@@ -1,13 +1,13 @@
 export class User{
 
-    IdUser:number;
+    idUser:number;
     username:string;
-    FirstName:string;
-    LastName:string;
+    firstName:string;
+    lastName:string;
     password:string;
-    nrMarticol:string;
+    nrMatricol:string;
     email:string;
-    isActiveAccount:boolean;
+    isAccountActive:boolean;
 
 }
 
