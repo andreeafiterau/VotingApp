@@ -14,6 +14,14 @@ namespace VotingApp.Entities
             Colleges = new List<College>();
             Departments = new List<Department>();
         }
+
+        public UserAdminView(User user,Role role,List<Department> dep,List<College> coll)
+        {
+            User = user;
+            Role = role;
+            Colleges = coll;
+            Departments = dep;
+        }
         public User User { get; set; }
 
         public Role Role  { get; set; }

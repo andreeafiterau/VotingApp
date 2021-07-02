@@ -6,8 +6,12 @@ namespace VotingApp.Dtos
     {
         public int IdElectoralRoom { get; set; }
 
-        public string ElectoralRoomName { get; set; }
+        public int IdElectionType { get; set; }
 
         public DateTime Date { get; set; }
+
+        public int IdCollege { get; set; }
+
+        public int IdDepartment { get; set; }
     }
 }

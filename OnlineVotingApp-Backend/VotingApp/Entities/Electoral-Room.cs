@@ -9,15 +9,21 @@ namespace VotingApp.Entities
     public class Electoral_Room
     {
         [Key]
-        [Column(Order = 2)]
-        [Required]
+        [Column(Order = 6)]
         public int IdElectoralRoom { get; set; }
 
-        [Required]
-        [StringLength(60)]
-        public string ElectoralRoomName { get; set; }
+
+        [ForeignKey("Election_Types")]
+        [Column(Order = 2)]
+        public int IdElectionType { get; set; }
 
         [Required]
         public DateTime Date { get; set; }
+
+        [Required]
+        public int IdCollege { get; set; }
+
+        [Required]
+        public int IdDepartment { get; set; }
     }
 }

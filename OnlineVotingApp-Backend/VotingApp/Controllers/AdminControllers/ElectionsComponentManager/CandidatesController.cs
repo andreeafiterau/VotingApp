@@ -27,12 +27,28 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             CandidateService = candidateService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")]//get candidates for every electoral room
         public IActionResult GetAll(int id)//alt numeeeeeee
         {
             var candidates = CandidateService.GetCandidates(id);
-            var candidatesDtos = Mapper.Map<IList<Candidate_Dto>>(candidates);
+            var candidatesDtos = Mapper.Map<IList<CandidateViewDto>>(candidates);
             return Ok(candidatesDtos);
+        }
+
+        [HttpPost("getPossibleCandidates")]
+
+        public IActionResult GetPossibleCandidates([FromBody] List<Candidate> currentCandidates)
+        {
+            try
+            {
+                var possibleCanddates=CandidateService.GetCandidatesForAdmin(currentCandidates);
+
+                return Ok(possibleCanddates);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -45,7 +61,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             {
                 // save 
                 Repository.Insert(candidate);
-                return Ok();
+                return Ok(candidate);
             }
             catch (Exception ex)
             {
@@ -75,7 +91,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             {
                 // save 
                 Repository.Update(candidate);
-                return Ok();
+                return Ok(candidate);
             }
             catch (Exception ex)
             {
@@ -88,7 +104,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
         public IActionResult Delete(int id)
         {
             Repository.Delete(id);
-            return Ok();
+            return Ok(id);
         }
     }
 }

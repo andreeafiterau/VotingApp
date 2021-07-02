@@ -12,13 +12,13 @@ namespace VotingApp.Entities
 
         public Election_User(int idElectoralRoom, int idUser)
         {
-            IdElectoralRoom = idElectoralRoom;
+            IdElectionType = idElectoralRoom;
             IdUser = idUser;
         }
 
-        [ForeignKey("Electoral_Rooms")]
+        [ForeignKey("ElectionTypes")]
         [Column(Order = 2)]
-        public int IdElectoralRoom { get; set; }
+        public int IdElectionType{ get; set; }
 
         [ForeignKey("Users")]
         [Column(Order = 0)]

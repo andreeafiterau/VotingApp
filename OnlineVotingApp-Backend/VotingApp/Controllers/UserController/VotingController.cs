@@ -60,9 +60,9 @@ namespace VotingApp.Controllers.UserController
                 // save 
                 var res = ElectionService.GetResults(id);
 
-                var resDto = Mapper.Map<ResultDto>(res);
+                
 
-                return Ok(resDto);
+                return Ok(res);
             }
             catch (Exception ex)
             {

@@ -25,16 +25,49 @@ namespace VotingApp.Controllers.AdminControllers.UsersComponentManager
         private IMapper Mapper { get; set; }
         private  IUsersInterface UsersService {get;set;}
 
+        private IRepository<Role> Repository { get; set; }
+
         private AppSettings _appSettings { get; set; }
-        public UsersComponentController(IMapper _mapper,IUsersInterface usersService, IOptions<AppSettings> appSettings)
+        public UsersComponentController(IMapper _mapper,IUsersInterface usersService, IOptions<AppSettings> appSettings, IRepository<Role> roleRepo)
         {
             
             Mapper = _mapper;
             UsersService = usersService;
             _appSettings = appSettings.Value;
+            Repository = roleRepo;
         }
 
-        
+        [HttpGet]
+        public IActionResult GetRoles()
+        {
+            try
+            {
+                var roles = Repository.GetAll();
+                //var rolesDto = Mapper.Map<RoleDto>(roles);
+                return Ok(roles);
+            }
+            catch(Exception ex) 
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("getAllUsers")]
+
+        public IActionResult GetAllUsers()
+        {
+            try
+            {
+                var users=UsersService.GetAllUsers();
+                var usersDto = Mapper.Map<IList<UserAdminViewDto>>(users);
+                return Ok(usersDto);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
 
         [HttpPost("filter")]
         public IActionResult GetAll([FromBody] ObjectForUsersFilterDto objectForUsersFilterDto)
@@ -62,7 +95,7 @@ namespace VotingApp.Controllers.AdminControllers.UsersComponentManager
             {
                 // save 
                 UsersService.AddUsers(userAdminView);
-                return Ok();
+                return Ok(userAdminView);
             }
             catch (Exception ex)
             {
@@ -78,12 +111,11 @@ namespace VotingApp.Controllers.AdminControllers.UsersComponentManager
             var userAdminView = Mapper.Map<UserAdminView>(userAdminViewDto);
             userAdminView.User.IdUser = id;
 
-
             try
             {
                 // save 
                 UsersService.UpdateUsersForAdmin(userAdminView);
-                return Ok();
+                return Ok(userAdminView);
             }
             catch (Exception ex)
             {
@@ -96,7 +128,7 @@ namespace VotingApp.Controllers.AdminControllers.UsersComponentManager
         public IActionResult Delete(int id)
         {
             UsersService.DeleteUserForAdmin(id);
-            return Ok();
+            return Ok(id);
         }
 
         

@@ -35,6 +35,20 @@ namespace VotingApp.Controllers.UserController
             _appSettings = appSettings.Value;
         }
 
+        //[HttpPost("getRole")]
+
+        //public IActionResult GetRole([FromBody] UserDto userDto)
+        //{
+        //    try
+        //    {
+        //        return Ok(UsersService.getRole(userDto.IdUser));
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
+
 
         [HttpPost("sendActivationCode")]
         public IActionResult SendActivationCode([FromBody] UserDto userDto)
@@ -42,6 +56,11 @@ namespace VotingApp.Controllers.UserController
             try
             {
                 var activationCode = UsersService.CreateActivationKey();
+
+                if(UsersService.IsUserActive(UsersService.FindUser(userDto.Email)))
+                {
+                    throw new Exception("The user is already active");
+                }
 
                 UsersService.AddActivationKeyToTable(activationCode, UsersService.FindUser(userDto.Email));
 
@@ -81,19 +100,30 @@ namespace VotingApp.Controllers.UserController
         [HttpPut("forgotPassword")]
         public IActionResult ForgotPasswordUpdate([FromBody] UserActivationViewDto userActivationViewDto)
         {
+            
             User user = UsersService.FindUserForActivation(userActivationViewDto.Email);
 
-            try
+            if (user!=null)
             {
-                //schimba numele functiei
-                UsersService.ForgotPasswordUpdate(user, userActivationViewDto.Password, userActivationViewDto.Code);
-                return Ok();
+                try
+                {
+                    //schimba numele functiei
+                    UsersService.ForgotPasswordUpdate(user, userActivationViewDto.Password, userActivationViewDto.Code);
+
+
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    // return error message if there was an exception
+                    return BadRequest(new { message = ex.Message });
+                }
             }
-            catch (Exception ex)
+            else
             {
-                // return error message if there was an exception
-                return BadRequest(new { message = ex.Message });
+                return BadRequest("User is not activated");
             }
+            
         }
 
         [HttpPut("activateUser")]
@@ -121,11 +151,12 @@ namespace VotingApp.Controllers.UserController
         {
             try
             {
-                var user = UsersService.Authenticate(userDto.Username, userDto.Password);
 
-                if (user == null)
+                var userAdminView = UsersService.Authenticate(userDto.Username, userDto.Password);
+
+                if (userAdminView.User == null)
                     return BadRequest(new { message = "Username or password is incorrect" });
-                if (!user.IsAccountActive)
+                if (!userAdminView.User.IsAccountActive)
                     return BadRequest(new { message = "User is inactive" });
 
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -134,7 +165,7 @@ namespace VotingApp.Controllers.UserController
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                    new Claim(ClaimTypes.Name, user.IdUser.ToString())
+                    new Claim(ClaimTypes.Name, userAdminView.User.IdUser.ToString())
                     }),
                     Expires = DateTime.UtcNow.AddDays(7),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -145,13 +176,16 @@ namespace VotingApp.Controllers.UserController
                 // return basic user info (without password) and token to store client side
                 return Ok(new
                 {
-                    IdUser = user.IdUser,
-                    Username = user.Username,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    NrMatricol = user.NrMatricol,
-                    IsAccountActive = user.IsAccountActive,
+                    IdUser = userAdminView.User.IdUser,
+                    Username = userAdminView.User.Username,
+                    Email = userAdminView.User.Email,
+                    FirstName = userAdminView.User.FirstName,
+                    LastName = userAdminView.User.LastName,
+                    NrMatricol = userAdminView.User.NrMatricol,
+                    IsAccountActive = userAdminView.User.IsAccountActive,
+                    Role= userAdminView.Role.RoleName,
+                    College=userAdminView.Colleges[0].IdCollege,
+                    Department=userAdminView.Departments[0].IdDepartment,
                     Token = tokenString
                 });
             }

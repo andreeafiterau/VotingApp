@@ -20,7 +20,7 @@ namespace VotingApp.Services.Queries
 
             sqlConnection1.Open();
 
-            int voteCount = cmd.ExecuteNonQuery();
+            int voteCount = (int)cmd.ExecuteScalar();
 
             sqlConnection1.Close();
 

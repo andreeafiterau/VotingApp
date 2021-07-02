@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using VotingApp.Dtos;
 using VotingApp.Entities;
 using VotingApp.Interfaces;
+using VotingApp.Services.Linq;
 
 namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
 {
@@ -14,16 +15,20 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
     {
         private IRepository<Department> Repository { get; set; }
         private IMapper Mapper { get; set; }
-        public DepartmentController(IRepository<Department> _repository, IMapper _mapper)
+
+        private ICollegeInterface CollegeService { get; set; }
+
+        public DepartmentController(IRepository<Department> _repository, IMapper _mapper,ICollegeInterface _collegeService)
         {
             Repository = _repository;
             Mapper = _mapper;
+            CollegeService = _collegeService;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        [HttpPost("getDepartmentsByCollegeId")]
+        public IActionResult GetAllForAdmin([FromBody] College_Dto collegeDto)
         {
-            var department = Repository.GetAll();
+            var department = CollegeService.GetDepartmentsForCollegeId(collegeDto.IdCollege);
             var departmentDtos = Mapper.Map<IList<DepartmentDto>>(department);
             return Ok(departmentDtos);
         }
@@ -38,7 +43,7 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
             {
                 // save 
                 Repository.Insert(department);
-                return Ok();
+                return Ok(department);
             }
             catch (Exception ex)
             {
@@ -58,7 +63,7 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
             {
                 // save 
                 Repository.Update(department);
-                return Ok();
+                return Ok(department);
             }
             catch (Exception ex)
             {
@@ -71,7 +76,7 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
         public IActionResult Delete(int id)
         {
             Repository.Delete(id);
-            return Ok();
+            return Ok(id);
         }
     }
 }

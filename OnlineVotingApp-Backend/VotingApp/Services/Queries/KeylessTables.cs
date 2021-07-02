@@ -99,18 +99,74 @@ namespace VotingApp.Helpers
             sqlConnection1.Close();
         }
 
-        //public static void DeleteFromTable_Users_Roles(int idUser)
-        //{
-        //    SqlConnection sqlConnection1 = new SqlConnection("Server = DESKTOP-RPNBQ1M; Integrated Security = true; Database = VotingApp; ");
+        public static void DeleteFromTable_Users_Roles(int idUser)
+        {
+            SqlConnection sqlConnection1 = new SqlConnection("Server = DESKTOP-RPNBQ1M; Integrated Security = true; Database = VotingApp; ");
 
-        //    SqlCommand cmd = new SqlCommand();
-        //    cmd.CommandType = System.Data.CommandType.Text;
-        //    cmd.CommandText = 
-        //    cmd.Connection = sqlConnection1;
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = System.Data.CommandType.Text;
+            cmd.CommandText = "DELETE FROM Users_Roles WHERE IdUser=" + idUser.ToString();
+            cmd.Connection = sqlConnection1;
 
-        //    sqlConnection1.Open();
-        //    cmd.ExecuteNonQuery();
-        //    sqlConnection1.Close();
-        //}
+            sqlConnection1.Open();
+            cmd.ExecuteNonQuery();
+            sqlConnection1.Close();
+        }
+
+        public static void DeleteFromTable_Users_Departments(int idUser)
+        {
+            SqlConnection sqlConnection1 = new SqlConnection("Server = DESKTOP-RPNBQ1M; Integrated Security = true; Database = VotingApp; ");
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = System.Data.CommandType.Text;
+            cmd.CommandText = "DELETE FROM Users_Departments WHERE IdUser=" + idUser.ToString();
+            cmd.Connection = sqlConnection1;
+
+            sqlConnection1.Open();
+            cmd.ExecuteNonQuery();
+            sqlConnection1.Close();
+        }
+
+        public static void DeleteFromTable_Candidates(int idUser)
+        {
+            SqlConnection sqlConnection1 = new SqlConnection("Server = DESKTOP-RPNBQ1M; Integrated Security = true; Database = VotingApp; ");
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = System.Data.CommandType.Text;
+            cmd.CommandText = "DELETE FROM Candidates WHERE IdUser=" + idUser.ToString();
+            cmd.Connection = sqlConnection1;
+
+            sqlConnection1.Open();
+            cmd.ExecuteNonQuery();
+            sqlConnection1.Close();
+        }
+
+        public static void DeleteFromTable_Departments(int idCollege)
+        {
+            SqlConnection sqlConnection1 = new SqlConnection("Server = DESKTOP-RPNBQ1M; Integrated Security = true; Database = VotingApp; ");
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = System.Data.CommandType.Text;
+            cmd.CommandText = "DELETE FROM Departments WHERE IdCollege=" + idCollege.ToString();
+            cmd.Connection = sqlConnection1;
+
+            sqlConnection1.Open();
+            cmd.ExecuteNonQuery();
+            sqlConnection1.Close();
+        }
+
+        public static void DeleteFromTable_Elections_Users(int idUser)
+        {
+            SqlConnection sqlConnection1 = new SqlConnection("Server = DESKTOP-RPNBQ1M; Integrated Security = true; Database = VotingApp; ");
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.CommandType = System.Data.CommandType.Text;
+            cmd.CommandText = "DELETE FROM Elections_Users WHERE IdUser=" + idUser.ToString();
+            cmd.Connection = sqlConnection1;
+
+            sqlConnection1.Open();
+            cmd.ExecuteNonQuery();
+            sqlConnection1.Close();
+        }
     }
 }

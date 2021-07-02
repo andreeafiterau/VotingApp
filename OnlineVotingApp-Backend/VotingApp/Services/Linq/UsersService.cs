@@ -28,7 +28,81 @@ namespace VotingApp.Services
 
         }//CONSTRUCTOR
 
-        public User Authenticate(string username, string password)
+        //public IEnumerable<Role> getRole(int idUser)
+        //{
+        //    //var users = _context.Users;
+        //    var users_roles = _context.Users_Roles;
+        //    var roles = _context.Roles;
+
+        //    var result = from ur in users_roles
+        //                 join r in roles on ur.IdRole equals r.IdRole
+        //                 where ur.IdUser == idUser
+        //                 select new Role
+        //                 {
+        //                     IdRole = ur.IdRole,
+        //                     RoleName = r.RoleName
+
+        //                 };
+
+        //    return result;
+
+        //}
+
+        public IEnumerable<UserAdminView> GetAllUsers()
+        {
+            List<UserAdminView> userAdminViews = new List<UserAdminView>();
+
+            var result = from users in _context.Users
+                         join r_users in _context.Users_Roles on users.IdUser equals r_users.IdUser
+                         join roles in _context.Roles on r_users.IdRole equals roles.IdRole
+                         join d_users in _context.Users_Departments on users.IdUser equals d_users.IdUser
+                         join departments in _context.Departments on d_users.IdDepartment equals departments.IdDepartment
+                         join coleges in _context.Colleges on departments.IdCollege equals coleges.IdCollege
+                         select new UserAdminView
+                         {
+                             
+                             User = new User(users.IdUser,users.Username, users.FirstName, users.LastName, users.NrMatricol, users.Email,users.IsAccountActive),
+                             Role =new Role(roles.IdRole,roles.RoleName),
+                             Colleges=new List<College>() { new College(coleges.IdCollege, coleges.CollegeName) },
+                             Departments=new List<Department>() { new Department(departments.IdDepartment, departments.DepartmentName, coleges.IdCollege) }                           
+                         };
+
+            foreach(var r in result)
+            {
+                if (!userAdminViews.Exists(u => u.User.IdUser == r.User.IdUser))
+                {
+                    UserAdminView userAdminView = new UserAdminView();
+                    userAdminView.User = new User(r.User.IdUser, r.User.Username, r.User.FirstName, r.User.LastName, r.User.NrMatricol, r.User.Email, r.User.IsAccountActive);
+                    userAdminView.Role = new Role(r.Role.IdRole, r.Role.RoleName);
+                    userAdminView.Departments.Add(new Department(r.Departments[0].IdDepartment, r.Departments[0].DepartmentName, r.Departments[0].IdCollege));
+                    userAdminView.Colleges.Add(new College(r.Colleges[0].IdCollege, r.Colleges[0].CollegeName));
+
+                    userAdminViews.Add(userAdminView);
+                }
+                else
+                {
+                    var u = userAdminViews.Find(u => u.User.IdUser == r.User.IdUser);
+                    if (!u.Colleges.Exists(d => d.IdCollege == r.Colleges[0].IdCollege))
+                    {
+                        UserAdminView userAdminView = new UserAdminView();
+                        userAdminView.Colleges.Add(new College(r.Colleges[0].IdCollege, r.Colleges[0].CollegeName));
+
+                    }
+
+                    if (!u.Departments.Exists(d => d.IdDepartment == r.Departments[0].IdDepartment))
+                    {
+                        UserAdminView userAdminView = new UserAdminView();
+                        userAdminView.Departments.Add(new Department(r.Departments[0].IdDepartment, r.Departments[0].DepartmentName, r.Departments[0].IdCollege));
+
+                    }
+
+                }
+            }
+
+            return userAdminViews;
+        }
+
+        public UserAdminView Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;//arg null
@@ -44,7 +118,31 @@ namespace VotingApp.Services
                 return null;
 
             // authentication successful
-            return user;
+            var users_roles = _context.Users_Roles.SingleOrDefault(user_roles => user_roles.IdUser == user.IdUser);
+            var role = _context.Roles.SingleOrDefault(role => role.IdRole == users_roles.IdRole);
+
+            if (role.IdRole != 1)
+            {
+                var user_departments = _context.Users_Departments.SingleOrDefault(user_dep => user_dep.IdUser == user.IdUser);
+                var departments = _context.Departments.SingleOrDefault(dep => dep.IdDepartment == user_departments.IdDepartment);
+
+                var colleges = _context.Colleges.SingleOrDefault(coll => coll.IdCollege == departments.IdCollege);
+
+                List<Department> dep = new List<Department>() { departments };
+                List<College> coll = new List<College>() { colleges };
+
+                return new UserAdminView(user, role, dep, coll);
+            }
+            else if(role.IdRole==1)
+            {
+
+                List<Department> dep = new List<Department>() { new Department() };
+                List<College> coll = new List<College>() {new College() };
+
+                return new UserAdminView(user, role, dep, coll);
+            }
+            return null;
+            
 
         }//METHOD Authenticate
 
@@ -65,9 +163,12 @@ namespace VotingApp.Services
             user.IsAccountActive = true;
 
             _context.Users.Update(user);
-            _context.SaveChanges();
 
-            //activation code delete after user id
+            var tokenEntry = _context.PasswordTokens.SingleOrDefault(token => token.IdUser == user.IdUser);
+
+            _context.Remove(tokenEntry);
+
+            _context.SaveChanges();
 
             return user;
         }
@@ -89,6 +190,11 @@ namespace VotingApp.Services
             user.IsAccountActive = true;
 
             _context.Users.Update(user);
+
+            var codeEntry=_context.Activation_Codes.SingleOrDefault(code => code.IdUser == user.IdUser);
+
+            _context.Remove(codeEntry);
+
             _context.SaveChanges();
 
             //activation code delete after user id
@@ -101,6 +207,8 @@ namespace VotingApp.Services
         {
             return _context.Users.SingleOrDefault(user => user.Email == Email);
         }
+
+       
         public string CreateActivationKey()
         {
             var activationKey = Guid.NewGuid().ToString();
@@ -118,27 +226,60 @@ namespace VotingApp.Services
 
         public void AddActivationKeyToTable(string Key,int IdUser)
         {
-            Activation_Code activation_code = new Activation_Code(Key, IdUser);
-            _activationCodeRepo.Insert(activation_code);
+
+            if(_context.Activation_Codes.FirstOrDefault(user=>user.IdUser==IdUser)==null)
+            {
+                Activation_Code activation_code = new Activation_Code(Key, IdUser);
+                _activationCodeRepo.Insert(activation_code);
+            }
+            else
+            {
+                throw new Exception("There is an entry with this user id");
+            }
+
         }
+
+        //public bool IsUserActive(int idUser)
+        //{
+        //    if(_userRepo.GetByID(idUser).IsAccountActive==true)
+        //    {
+        //        return true;               
+        //    }
+        //    return false;
+        //}
 
         public void AddPasswordTokenToTable(string Token,int IdUser)
         {
-            PasswordToken passwordToken = new PasswordToken(Token, IdUser);
-            _passwordTokenRepo.Insert(passwordToken);
+            if (IsUserActive(IdUser))
+            {
+                PasswordToken passwordToken = new PasswordToken(Token, IdUser);
+                _passwordTokenRepo.Insert(passwordToken);
+            }
+            else
+            {
+                throw new Exception("The user is not active");
+            }
+           
         }
 
         public bool VerifyActivationCode(string Key,int idUser)
         {
-            //get after idUser
-            var codeFromTable = _context.Activation_Codes.SingleOrDefault(user => user.IdUser == idUser).Code;
            
-            if(codeFromTable != Key)
+            var codeFromTable =_context.Activation_Codes.SingleOrDefault(user => user.IdUser == idUser).Code;
+                
+            if (codeFromTable != Key)
             {
-                return false;
+                    return false;
             }
 
             return true;
+           
+                       
+        }
+
+        public bool IsUserActive(int idUser)
+        {
+            return _context.Users.SingleOrDefault(user => user.IdUser == idUser).IsAccountActive;
         }
 
         public bool VerifyPasswordToken(string Token, int IdUser)
@@ -181,7 +322,7 @@ namespace VotingApp.Services
             var user= _context.Users.SingleOrDefault(user => user.Email == email);
 
             if (user == null)
-                   throw new Exception("Email is incorrect");
+                   throw new Exception("Email was not found in the database");//explicit : nu exista emailul in baza de date
 
             return user.IdUser;
         }
@@ -192,7 +333,7 @@ namespace VotingApp.Services
             {
                 Port = 587,
                 Credentials = new NetworkCredential("andreea.fiterau96@gmail.com", "Fa04volei/ro"),
-                EnableSsl = true,
+                EnableSsl = true
             };
 
             smtpClient.Send("andreea.fiterau96@gmail.com",email, "ActivationCode", "The activation code is:"+ activationCode);
@@ -262,23 +403,6 @@ namespace VotingApp.Services
         //poate sa faca upd daca userul nu si a activat contul,daca e activat pate sa mod facultatea,dep,rol
         public void UpdateUsersForAdmin(UserAdminView userAdminView)
         {
-            if(userAdminView.User.IsAccountActive)
-            {
-
-                AddToKeylessTable.UpdateTable_User_Role(userAdminView.User.IdUser, userAdminView.Role.IdRole);
-
-               
-                foreach (var department in userAdminView.Departments)
-                {
-
-                    AddToKeylessTable.UpdateTable_User_Department(userAdminView.User.IdUser, department.IdDepartment);
-
-                }
-
-                _context.SaveChanges();
-            }
-            else
-            {
 
                 _userRepo.Update(new User(userAdminView.User.IdUser,userAdminView.User.Username, userAdminView.User.FirstName,
                                               userAdminView.User.LastName, userAdminView.User.NrMatricol,
@@ -296,8 +420,7 @@ namespace VotingApp.Services
 
                 }
 
-                _context.SaveChanges();
-            }
+            _context.SaveChanges();
 
         }
 
@@ -308,9 +431,11 @@ namespace VotingApp.Services
             var user_dep = _context.Users_Departments;
             var user = _context.Users;
 
-            _context.Remove(user_role.Find(id));
-            _context.Remove(user_dep.Find(id));
-            _context.Remove(user.Find(id));
+            AddToKeylessTable.DeleteFromTable_Users_Roles(id);
+            AddToKeylessTable.DeleteFromTable_Users_Departments(id);
+            AddToKeylessTable.DeleteFromTable_Candidates(id);
+            AddToKeylessTable.DeleteFromTable_Elections_Users(id);
+            _context.Users.Remove(user.SingleOrDefault(d => d.IdUser == id));
 
             _context.SaveChanges();
 
@@ -323,7 +448,7 @@ namespace VotingApp.Services
             {
                 Port = 587,
                 Credentials = new NetworkCredential("andreea.fiterau96@gmail.com", "Fa04volei/ro"),
-                EnableSsl = true,
+                EnableSsl = true
             };
 
             smtpClient.Send("andreea.fiterau96@gmail.com", Email, "Password Token", "The password token is: " + PasswordToken);

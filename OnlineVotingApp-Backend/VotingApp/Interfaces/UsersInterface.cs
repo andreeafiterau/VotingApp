@@ -8,6 +8,9 @@ namespace VotingApp.Interfaces
 {
     public interface IUsersInterface 
     {
+        IEnumerable<UserAdminView> GetAllUsers();
+        bool IsUserActive(int idUser);
+        //IEnumerable<Role> getRole(int idUser);
         User ForgotPasswordUpdate(User user, string password, string passwordToken);
         void AddPasswordTokenToTable(string token,int IdUser);
         void SendPasswordToken(string Email, string PasswordToken);
@@ -18,7 +21,7 @@ namespace VotingApp.Interfaces
         void AddActivationKeyToTable(string Key, int IdUser);
         string CreateActivationKey();
         void ChangePassword(string username,string password);
-        User Authenticate(string username, string password);
+        UserAdminView Authenticate(string username, string password);
         User ActivateUser(User user, string password, string activationCode);
         IEnumerable<UserAdminView> GetAllUsersForAdmin(ObjectForUsersFilter objectForUsersFilter);
         void AddUsers(UserAdminView userAdminView);

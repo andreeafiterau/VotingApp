@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using VotingApp.Dtos;
 using VotingApp.Entities;
 using VotingApp.Interfaces;
+using VotingApp.Services.Linq;
 
 namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
 {
@@ -16,18 +17,29 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
     {
         private IRepository<College> Repository { get; set; }
         private IMapper Mapper { get; set; }
-        public CollegeController(IRepository<College> _repository, IMapper _mapper)
+
+        private ICollegeInterface CollegeService;
+        public CollegeController(IRepository<College> _repository, IMapper _mapper, ICollegeInterface collegeService)
         {
             Repository = _repository;
             Mapper = _mapper;
+            CollegeService = collegeService;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var college = Repository.GetAll();
-            var collegeDtos = Mapper.Map<IList<College_Dto>>(college);
-            return Ok(collegeDtos);
+            try
+            {
+                var college = Repository.GetAll();
+                //var collegeDtos = Mapper.Map<IList<College_Dto>>(college);
+                return Ok(college);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            
         }
 
         [HttpPost]
@@ -40,7 +52,7 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
             {
                 // save 
                 Repository.Insert(college);
-                return Ok();
+                return Ok(college);
             }
             catch (Exception ex)
             {
@@ -60,7 +72,7 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
             {
                 // save 
                 Repository.Update(college);
-                return Ok();
+                return Ok(college);
             }
             catch (Exception ex)
             {
@@ -72,8 +84,15 @@ namespace VotingApp.Controllers.AdminControllers.ManageCollegeComponent
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Repository.Delete(id);
-            return Ok();
+            try
+            {
+                CollegeService.DeleteCollege(id);
+                return Ok(id);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

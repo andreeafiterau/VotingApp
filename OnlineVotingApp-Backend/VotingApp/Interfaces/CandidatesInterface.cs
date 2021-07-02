@@ -8,7 +8,8 @@ namespace VotingApp.Interfaces
 {
     public interface ICandidateInterface
     {
-        IEnumerable<Candidate> GetCandidates(int IdElectoralRoom);
+        IEnumerable<CandidateView> GetCandidatesForAdmin(List<Candidate> candidateCurrentList);
+        IEnumerable<CandidateView> GetCandidates(int IdElectoralRoom);
 
         //void AddCandidateOnElectoralRoom(int IdElectoralRoom, int IdCandidate);
     }

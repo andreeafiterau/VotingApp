@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using VotingApp.Dtos;
 using VotingApp.Entities;
 using VotingApp.Interfaces;
+using VotingApp.Services;
 
 namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager.NewFolder
 {
@@ -15,20 +16,24 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager.NewFo
     public class ElectoralRoomController : ControllerBase
     {
         private IRepository<Electoral_Room> Repository { get; set; }
+
+        private IElectionInterface ElectionService { get; set; }
         private IMapper Mapper { get; set; }
 
-        public ElectoralRoomController(IRepository<Electoral_Room> _repository, IMapper _mapper)
+        public ElectoralRoomController(IRepository<Electoral_Room> _repository, IMapper _mapper,IElectionInterface electionService)
         {
             Repository = _repository;
             Mapper = _mapper;
+            ElectionService = electionService;
         }
 
-        [HttpGet]
+        [HttpGet] //gets all electoral rooms + candidates
         public IActionResult GetAll()
         {
-            var electoralRoom = Repository.GetAll();
-            var electoralRoomDtos = Mapper.Map<IList<Electoral_Room_Dto>>(electoralRoom);
-            return Ok(electoralRoomDtos);
+            //var electoralRooms = Repository.GetAll();
+            var electoralRooms = ElectionService.GetAllElectoralRooms();
+            //var electoralRoomDtos = Mapper.Map<IList<ElectionView>>(electoralRoom);
+            return Ok(electoralRooms);
         }
 
         [HttpPost]
@@ -41,7 +46,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager.NewFo
             {
                 // save 
                 Repository.Insert(electoralRoom);
-                return Ok();
+                return Ok(electoralRoom);
             }
             catch (Exception ex)
             {
@@ -61,7 +66,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager.NewFo
             {
                 // save 
                 Repository.Update(college);
-                return Ok();
+                return Ok(college);
             }
             catch (Exception ex)
             {
@@ -74,7 +79,7 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager.NewFo
         public IActionResult Delete(int id)
         {
             Repository.Delete(id);
-            return Ok();
+            return Ok(id);
         }
     }
 }

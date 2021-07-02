@@ -15,6 +15,7 @@ using VotingApp.Entities;
 using VotingApp.Helpers;
 using VotingApp.Interfaces;
 using VotingApp.Services;
+using VotingApp.Services.Linq;
 
 namespace VotingApp
 {
@@ -89,6 +90,9 @@ namespace VotingApp
             services.AddScoped<IRepository<Candidate>, BaseRepository<Candidate>>();
             services.AddScoped<IRepository<Activation_Code>, BaseRepository<Activation_Code>>();
             services.AddScoped<IRepository<PasswordToken>, BaseRepository<PasswordToken>>();
+            services.AddScoped<IRepository<ElectionTypes>, BaseRepository<ElectionTypes>>();
+            services.AddScoped<ICollegeInterface, CollegeService>();
+            services.AddScoped<IRepository<Role>, BaseRepository<Role>>();
 
         }
 

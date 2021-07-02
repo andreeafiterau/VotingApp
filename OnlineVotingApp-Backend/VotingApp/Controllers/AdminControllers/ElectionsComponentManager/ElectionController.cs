@@ -15,15 +15,18 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
     public class ElectionController : ControllerBase
     {
         private IRepository<Electoral_Room> Repository { get; set; }
+
+        private IRepository<ElectionTypes> electionRepo { get; set; }
         private IMapper Mapper { get; set; }
 
         private IElectionInterface ElectionService { get; set; }
 
-        public ElectionController(IRepository<Electoral_Room> _repository, IMapper _mapper,IElectionInterface electionService)
+        public ElectionController(IRepository<Electoral_Room> _repository, IMapper _mapper,IElectionInterface electionService, IRepository<ElectionTypes> _electionRepo)
         {
             Repository = _repository;
             Mapper = _mapper;
             ElectionService = electionService;
+            electionRepo = _electionRepo;
         }
 
         [HttpGet("{id}")]
@@ -33,6 +36,20 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             var usersForElection = ElectionService.GetUsersForElection(objectForUsersFilter, id);
             var usersForElectionDtos = Mapper.Map<IList<UserDto>>(usersForElection);
             return Ok(usersForElectionDtos);
+        }
+
+        [HttpGet]
+
+        public IActionResult GetElectionTypes()
+        {
+            try
+            {
+                return Ok(electionRepo.GetAll());
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost("{id}")]
@@ -74,12 +91,49 @@ namespace VotingApp.Controllers.AdminControllers.ElectionsComponentManager
             }
         }
 
+        [HttpPost("getPresent")]
 
-        //[HttpDelete("{id}")]
-        //public IActionResult Delete(int id)
-        //{
-        //    Repository.Delete(id);
-        //    return Ok();
-        //}
+        public IActionResult GetPresentElectoralRooms([FromBody] UserDto userDto)
+        {
+            try
+            {
+                return Ok(ElectionService.GetPresentElectoralRooms(userDto.IdUser));
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("getPast")]
+
+        public IActionResult GetPastElectoralRooms([FromBody] UserDto userDto)
+        {
+            try
+            {
+                return Ok(ElectionService.GetPastElectoralRooms(userDto.IdUser));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("getFuture")]
+
+        public IActionResult GetFutureElectoralRooms([FromBody] UserDto userDto)
+        {
+            try
+            {
+                return Ok(ElectionService.GetFutureElectoralRooms(userDto.IdUser));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

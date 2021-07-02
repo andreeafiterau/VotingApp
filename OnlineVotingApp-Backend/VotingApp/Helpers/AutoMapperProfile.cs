@@ -22,6 +22,8 @@ namespace VotingApp.Helpers
             CreateMap<ObjectForUsersFilter, ObjectForUsersFilterDto>();
             CreateMap<UserAdminViewDto, UserAdminView>();
             CreateMap<UserAdminView, UserAdminViewDto>();
+            CreateMap<CandidateView, CandidateViewDto>();
+            CreateMap<CandidateViewDto, CandidateView>();
             CreateMap<Candidate, Candidate_Dto>();
             CreateMap<Candidate_Dto, Candidate>();
             CreateMap<College, College_Dto>();

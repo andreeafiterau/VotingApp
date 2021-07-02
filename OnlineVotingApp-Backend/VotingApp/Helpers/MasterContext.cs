@@ -31,6 +31,9 @@ namespace VotingApp.Helpers
      
         public DbSet<PasswordToken> PasswordTokens { get; set; }
 
+        public DbSet<ElectionTypes> ElectionTypes { get; set; }
+
+        public DbSet<ElectionRules> ElectionRules { get; set; }
 
     }
 }
